@@ -6,9 +6,11 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.sql.DataSource;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -22,105 +24,159 @@ import javax.swing.JSpinner;
 import javax.swing.border.LineBorder;
 import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
+
+import Model.*;
+//import DG_controller.DocgiaDAO;
+//import DG_model.Docgia;
+//import book_model.Sach;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import gdDN.*;
+//import registerBook_controller.RegisterBookDAO;
+//import registerBook_model.RegisterBook;
+
+import javax.swing.SpinnerNumberModel;
 public class ghi_nhan_muon_sach extends JDialog {
 
 	private static final long serialVersionUID = 1L;
-	private final JPanel contentPanel = new JPanel(),panelMenu;
-	private jT txtTieuDe,txtTacGia,txtTrangThaiSach,txtHoTen,txtEmail,txtSDT;
-	private JDateChooser dateChooserMuon;
-	private JComboBox comboBoxId;
+	private JPanel contentPanel;
+	private jT txtTieuDe,txtTacGia,txtTrangThaiSach,txtHoTen,txtSDT;
+	private JDateChooser dateChooserMuon,dateChooserTra;
+	private JComboBox cbbIdSach,cbbIdDG;
+	private ArrayList<Sach> listSach;
+	private ArrayList<Docgia> listDG;
+	private ArrayList<phieumuon> listphieu;
+	private PhieuDAO PhieuDAO;
+	private SachDAO SachDao;
+	private DocgiaDAO DGDao;
+	private int idp = -1;
+	private panelQlymuon qlm;
+
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		try {
-			ghi_nhan_muon_sach dialog = new ghi_nhan_muon_sach();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String[] args) {
+//		try {
+//			ghi_nhan_muon_sach dialog = new ghi_nhan_muon_sach();
+//			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			dialog.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
-	/**
-	 * Create the dialog.
-	 */
-	public ghi_nhan_muon_sach() {
-		setBounds(100, 100, 1006, 661);
+	 public ghi_nhan_muon_sach(panelQlymuon qlm)
+	 {	 this.qlm = qlm;
+		 initComponents();
+		 setLocationRelativeTo(null);
+		 listSach = new ArrayList<>();
+		 listDG = new ArrayList<>();
+		 listphieu = new ArrayList<>();
+		 DGDao = new DocgiaDAO();
+		 SachDao = new SachDAO();	
+		 PhieuDAO = new PhieuDAO();
+		 SachDao.getInstance().selectAll(listSach);
+		 DGDao.getInstance().selectAll(listDG);
+		 PhieuDAO.getInstance().selectAll(listphieu);
+		 setcbbIDSach();
+		 setcbbIDDG();
+		 idp = setIDPhieu(listphieu);
+		 txtTrangThaiSach.setText("Chưa trả");
+		 
+	 }
+	 private int setIDPhieu(ArrayList<phieumuon> listRB)
+		{
+			int max = listRB.get(0).get_id_phieu();
+			if(listRB.size() == 0)
+				max = 0;
+			else
+			{
+				for(int i = 1;i<listRB.size(); i++)
+				{
+					if(max < listRB.get(i).get_id_phieu())
+					{
+						max = listRB.get(i).get_id_phieu();
+					}
+				}
+			}
+			return max;
+		}
+	 private void setcbbIDSach()
+		{
+			for(Sach s : listSach)
+			{
+				cbbIdSach.addItem(s.get_id_sach());
+			}
+			//lấy id sách được chọn
+			String selectID =  String.valueOf(cbbIdSach.getSelectedItem()); 
+			
+			Sach selectBook = SachDao.getInstance().seachBookId(listSach, selectID);
+			if(selectBook != null)
+			{
+				txtTieuDe.setText(selectBook.get_tensach());
+				txtTacGia.setText(selectBook.get_tacgia());
+			}
+			//Thêm sự kiện cho cbb
+			cbbIdSach.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					
+					//lấy id sách được chọn
+					String selectID =  String.valueOf(cbbIdSach.getSelectedItem()); 
+					
+					Sach selectBook = SachDao.getInstance().seachBookId(listSach, selectID);
+					if(selectBook != null)
+					{
+						txtTieuDe.setText(selectBook.get_tensach());
+						txtTacGia.setText(selectBook.get_tacgia());
+					}
+				}
+			});
+			
+		}
+	private void setcbbIDDG()
+	{
+		for(Docgia d : listDG)
+		{
+			cbbIdDG.addItem(d.get_id());
+		}
+		String selectID =  String.valueOf(cbbIdDG.getSelectedItem()); 
+		
+		Docgia selectDG = DocgiaDAO.getInstance().seachDGId(listDG, selectID);
+		if(selectDG != null)
+		{
+			txtHoTen.setText(selectDG.get_hoten());
+			txtSDT.setText(selectDG.get_sdt());
+		}
+		//Thêm sự kiện cho cbb
+		cbbIdDG.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				//lấy id sách được chọn
+				String selectID =  String.valueOf(cbbIdDG.getSelectedItem()); 
+				
+				Docgia selectDG = DGDao.getInstance().seachDGId(listDG, selectID);
+				if(selectDG != null)
+				{
+					txtHoTen.setText(selectDG.get_hoten());
+					txtSDT.setText(selectDG.get_sdt());
+				}
+			}
+		});
+	}
+	private void initComponents() {
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		this.setBounds(238, 0, 700, 620);
+		contentPanel = new JPanel();
 		contentPanel.setBackground(new Color(69, 171, 148));
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPanel);
 		contentPanel.setLayout(null);
-		
-		panelMenu = new JPanel();
-		panelMenu.setBackground(new Color(63, 133, 124));
-		panelMenu.setBounds(0, 0, 246, 624);
-		contentPanel.add(panelMenu);
-		panelMenu.setLayout(null);
-		
-		JLabel lbl1 = new JLabel("Quản lý thư viện");
-		lbl1.setForeground(new Color(255, 255, 255));
-		
-		lbl1.setIcon(new ImageIcon("C:\\Users\\hoang\\OneDrive\\Documents\\Pictures\\Ảnh cho pbl3\\manager man.png"));
-		lbl1.setHorizontalTextPosition(SwingConstants.CENTER);
-		lbl1.setHorizontalAlignment(SwingConstants.CENTER);
-		lbl1.setVerticalTextPosition(SwingConstants.BOTTOM); // Hiển thị văn bản phía dưới icon
-		lbl1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lbl1.setBounds(33, 23, 148, 124);
-		panelMenu.add(lbl1);
-		
-		JLabel lbl4 = new JLabel("Quản lý mượn-trả sách");
-		lbl4.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lbl4.setForeground(new Color(255, 255, 255));
-		lbl4.setIcon(new ImageIcon("C:\\Users\\hoang\\OneDrive\\Documents\\Pictures\\Ảnh cho pbl3\\icons8-list-48.png"));
-		lbl4.setBounds(10, 348, 227, 41);
-		panelMenu.add(lbl4);
-		
-		JLabel lbl2 = new JLabel("Trang chủ");
-		lbl2.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lbl2.setIcon(new ImageIcon("C:\\Users\\hoang\\OneDrive\\Documents\\Pictures\\Ảnh cho pbl3\\home.png"));
-		lbl2.setForeground(new Color(255, 255, 255));
-		lbl2.setBackground(new Color(255, 255, 255));
-		lbl2.setBounds(10, 185, 227, 50);
-		panelMenu.add(lbl2);
-		
-		JLabel lbl3 = new JLabel("Quản lý kho sách");
-		lbl3.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-
-			}
-		});
-		lbl3.setForeground(new Color(255, 255, 255));
-		lbl3.setIcon(new ImageIcon("C:\\Users\\hoang\\OneDrive\\Documents\\Pictures\\Ảnh cho pbl3\\book stack.png"));
-		lbl3.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lbl3.setBounds(10, 263, 207, 55);
-		panelMenu.add(lbl3);
-		
-		JLabel lbl5 = new JLabel("Quản lý người mượn");
-		lbl5.setIcon(new ImageIcon("C:\\Users\\hoang\\OneDrive\\Documents\\Pictures\\Ảnh cho pbl3\\people manage.png"));
-		lbl5.setForeground(new Color(255, 255, 255));
-		lbl5.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lbl5.setBounds(10, 420, 227, 55);
-		panelMenu.add(lbl5);
-		
-		JLabel lbl6 = new JLabel("Đăng  xuất");
-		lbl6.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-
-				
-			}
-	});
-	lbl6.setIcon(new ImageIcon("C:\\Users\\hoang\\OneDrive\\Documents\\Pictures\\Ảnh cho pbl3\\log out.png"));
-	lbl6.setFont(new Font("Tahoma", Font.PLAIN, 16));
-	lbl6.setForeground(new Color(255, 255, 255));
-	lbl6.setBounds(10, 559, 207, 55);
-	panelMenu.add(lbl6);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -140,12 +196,12 @@ public class ghi_nhan_muon_sach extends JDialog {
 		
 		JLabel lblNewLabel = new JLabel("Ghi nhận mượn sách");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		lblNewLabel.setBounds(296, 32, 224, 35);
+		lblNewLabel.setBounds(237, 38, 224, 35);
 		contentPanel.add(lblNewLabel);
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(197, 197, 197));
-		panel.setBounds(296, 130, 635, 412);
+		panel.setBounds(30, 130, 635, 412);
 		contentPanel.add(panel);
 		panel.setLayout(null);
 		
@@ -187,6 +243,7 @@ public class ghi_nhan_muon_sach extends JDialog {
 		panel_1.add(lblNewLabel_6);
 		
 		txtTieuDe = new jT();
+		txtTieuDe.setEditable(false);
 		txtTieuDe.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		txtTieuDe.setBorder(new EmptyBorder(10, 3, 5, 10));
 		txtTieuDe.setBackground(new Color(250, 250, 250));
@@ -195,10 +252,12 @@ public class ghi_nhan_muon_sach extends JDialog {
 		txtTieuDe.setColumns(10);
 		
 		JSpinner spinnerCount = new JSpinner();
+		spinnerCount.setModel(new SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
 		spinnerCount.setBounds(176, 176, 38, 27);
 		panel_1.add(spinnerCount);
 		
 		txtTacGia = new jT();
+		txtTacGia.setEditable(false);
 		txtTacGia.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		txtTacGia.setBorder(new EmptyBorder(10, 3, 5, 10));
 		txtTacGia.setBackground(new Color(250, 250, 250));
@@ -207,6 +266,7 @@ public class ghi_nhan_muon_sach extends JDialog {
 		txtTacGia.setColumns(10);
 		
 		txtTrangThaiSach = new jT();
+		txtTrangThaiSach.setEditable(false);
 		txtTrangThaiSach.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		txtTrangThaiSach.setBorder(new EmptyBorder(10, 3, 5, 10));
 		txtTrangThaiSach.setBackground(new Color(250, 250, 250));
@@ -214,9 +274,9 @@ public class ghi_nhan_muon_sach extends JDialog {
 		panel_1.add(txtTrangThaiSach);
 		txtTrangThaiSach.setColumns(10);
 		
-		comboBoxId = new JComboBox();
-		comboBoxId.setBounds(139, 44, 156, 25);
-		panel_1.add(comboBoxId);
+		cbbIdSach = new JComboBox();
+		cbbIdSach.setBounds(139, 44, 156, 25);
+		panel_1.add(cbbIdSach);
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBackground(new Color(250, 250, 250));
@@ -230,20 +290,12 @@ public class ghi_nhan_muon_sach extends JDialog {
 		lblNewLabel_7.setBounds(94, 0, 169, 27);
 		panel_2.add(lblNewLabel_7);
 		
-		JLabel lblNewLabel_8 = new JLabel("Họ tên");
+		JLabel lblNewLabel_8 = new JLabel("Id độc giả");
 		lblNewLabel_8.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblNewLabel_8.setBounds(20, 41, 64, 27);
+		lblNewLabel_8.setBounds(20, 41, 73, 27);
 		panel_2.add(lblNewLabel_8);
 		
-		txtHoTen = new jT();
-		txtHoTen.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		txtHoTen.setBorder(new EmptyBorder(10, 3, 5, 10));
-		txtHoTen.setBackground(new Color(250, 250, 250));
-		txtHoTen.setBounds(115, 30, 156, 40);
-		panel_2.add(txtHoTen);
-		txtHoTen.setColumns(10);
-		
-		JLabel lblNewLabel_9 = new JLabel("Email");
+		JLabel lblNewLabel_9 = new JLabel("Họ tên");
 		lblNewLabel_9.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		lblNewLabel_9.setBounds(20, 106, 90, 27);
 		panel_2.add(lblNewLabel_9);
@@ -258,15 +310,17 @@ public class ghi_nhan_muon_sach extends JDialog {
 		lblNewLabel_11.setBounds(20, 229, 90, 27);
 		panel_2.add(lblNewLabel_11);
 		
-		txtEmail = new jT();
-		txtEmail.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		txtEmail.setBorder(new EmptyBorder(10, 3, 5, 10));
-		txtEmail.setBackground(new Color(250, 250, 250));
-		txtEmail.setBounds(115, 90, 156, 50);
-		panel_2.add(txtEmail);
-		txtEmail.setColumns(10);
+		txtHoTen = new jT();
+		txtHoTen.setEditable(false);
+		txtHoTen.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		txtHoTen.setBorder(new EmptyBorder(10, 3, 5, 10));
+		txtHoTen.setBackground(new Color(250, 250, 250));
+		txtHoTen.setBounds(115, 92, 156, 50);
+		panel_2.add(txtHoTen);
+		txtHoTen.setColumns(10);
 		
 		txtSDT = new jT();
+		txtSDT.setEditable(false);
 		txtSDT.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		txtSDT.setBorder(new EmptyBorder(20, 3, 8, 30));
 		txtSDT.setBackground(new Color(250, 250, 250));
@@ -289,22 +343,122 @@ public class ghi_nhan_muon_sach extends JDialog {
 		lblNewLabel_12.setBounds(20, 318, 90, 27);
 		panel_2.add(lblNewLabel_12);
 		
-		JDateChooser dateChooserTra = new JDateChooser();
+		dateChooserTra = new JDateChooser();
+		dateChooserTra.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		dateChooserTra.setDateFormatString("dd-MM-yyyy");
 		dateChooserTra.setBounds(20, 360, 287, 27);
 		panel_2.add(dateChooserTra);
 		
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.setBounds(715, 557, 85, 21);
-		contentPanel.add(btnNewButton);
+		cbbIdDG = new JComboBox();
+		cbbIdDG.setBounds(104, 44, 159, 25);
+		panel_2.add(cbbIdDG);
 		
-		JButton btnNewButton_1 = new JButton("New button");
-		btnNewButton_1.setBounds(838, 557, 85, 21);
-		contentPanel.add(btnNewButton_1);
-		btnNewButton.addActionListener(new ActionListener() {
+		
+		
+		JButton btnThoat = new JButton("Thoát");
+		btnThoat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Date ngayViDu = dateChooserMuon.getDate();
-				JOptionPane.showMessageDialog(contentPanel, ngayViDu);
+				dispose();
+				qlm.reloadDataAndRefreshPanel();
 			}
 		});
+		btnThoat.setBounds(546, 557, 85, 21);
+		contentPanel.add(btnThoat);
+		
+		JButton btnThem = new JButton("Ghi Nhận");
+		btnThem.setBounds(404, 557, 85, 21);
+		contentPanel.add(btnThem);
+		btnThem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int idsach = (int) cbbIdSach.getSelectedItem();
+				int iddg = (int) cbbIdDG.getSelectedItem();
+				
+				Date ngaymuon = dateChooserMuon.getDate();
+				Date ngaytra = dateChooserTra.getDate();
+				//JOptionPane.showMessageDialog(contentPanel, ngaytra.getTime());
+				//Date ngaytra =  dateChooserTra.getDate();
+				//if(ngaytra.getTime() < ngayViDu.getTime())
+					//JOptionPane.showMessageDialog(contentPanel, "sai");
+				int sl = (int) spinnerCount.getValue();
+				if(ngaytra != null)
+				{
+					try {
+						
+						Sach book = checkBookId(idsach);
+						if(sl < book.get_soluong())
+						{
+							if(sl<=3)
+							{
+								if(ngaytra.getTime() > ngaymuon.getTime())
+								{
+									
+									if(!isRegisterBookExist(idsach, iddg))
+									{
+										int scl = book.get_soluong() - sl;
+										book.set_soluong(scl);
+										SachDao.getInstance().Update(book);
+										phieumuon addphieu =  new phieumuon(++idp,  iddg,idsach, sl, ngaymuon, ngaytra, 0);
+										PhieuDAO.getInstance().Insert(addphieu);
+										JOptionPane.showMessageDialog(contentPanel, "thêm thành công");
+										cbbIdSach.setSelectedIndex(0);
+										cbbIdDG.setSelectedIndex(0);
+										setcbbIDDG();
+										setcbbIDSach();
+									}else
+									{
+										JOptionPane.showMessageDialog(contentPanel, "mã độc giả: "+ iddg + " đã mượn sách với "+ "mã sách:" + idsach);
+									}
+								}
+								else
+								{
+									JOptionPane.showMessageDialog(contentPanel, "ngày hẹn trả phải "+ "lớn hơn ngày đang mượn");
+								}
+							}
+							else
+							{
+								JOptionPane.showMessageDialog(contentPanel, " chỉ được phép mượn tối đa 3 quyển");
+							}
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(contentPanel, "số lượng sách trong "
+	                                + "thư viên không đủ cho "
+	                                + "bạn mượn(số sách còn lại là: "
+	                                + book.get_soluong() + ")");
+						}
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(contentPanel, "Không được để trống thông tin ngày trả");
+				}
+				
+				
+			}
+		});
+		dispose();
+		qlm.reloadDataAndRefreshPanel();
 	}
+	private Sach checkBookId(int bookId) {
+		
+        for (Sach e : listSach) {
+
+            if (e.get_id_sach() == bookId) {
+
+                return e;
+            }
+        }
+        return null;
+    }
+	private boolean isRegisterBookExist(int bookId, int readerId) {
+	    for (phieumuon rb : listphieu) {
+	        if (rb.get_id_sach() == bookId && rb.get_id_docgia() == readerId) {
+	            return true; // Đã tồn tại trong danh sách
+	        }
+	    }
+	    return false; // Không tồn tại trong danh sách
+	}
+
 }

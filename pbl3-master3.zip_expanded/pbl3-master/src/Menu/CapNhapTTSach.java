@@ -39,6 +39,7 @@ public class CapNhapTTSach extends JDialog {
 	private jT txtTenTacGia,txtTheLoai,txtTieudeSach,txtNamxb;
 	private JSpinner spinnerCount;
 	private JComboBox comboBox;
+	PhieuDAO phieuDao;
 	private int ids;
 	private int idt;	
 //	public static void main(String[] args) {
@@ -243,7 +244,7 @@ public class CapNhapTTSach extends JDialog {
 		            try {
 		                sach = new Sach(ids, idt, tacgia, tensach ,theloai , nhaXB,namXB, soluong);
 		                parentPn.editBook(sach);
-		                 
+		                
 		               JOptionPane.showMessageDialog(rootPane, "sửa thành công");
 		               dispose();
 		               //QlySach ql = new QlySach(); ql.setVisible(true);

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import javax.sql.DataSource;
 
-import book_model.Sach;
 
 public interface DAOInterface<T> {
 	public int Insert(T t);

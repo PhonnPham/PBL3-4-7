@@ -1,7 +1,8 @@
 package Menu;
 import gdDN.*;
-import Đoc_gia.*; 
 import QL_Muon_Sach_view.*;
+import doc_gia.*;
+
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -12,14 +13,20 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+
+import Model.Sach;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class home extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panelTemp;
 	private panelMenu panelMenu;
+	
+	//private ArrayList<Sach> listSach;
 	//private panelQlySach panelQlySach;
 	private JFrame home = this; // tham chiếu tới Fram hiện tại
 	/**
@@ -54,6 +61,7 @@ public class home extends JFrame {
 			panelMenu = new panelMenu(this);
 			contentPane.setLayout(null);
 			contentPane.add(panelMenu);
+			this.AddPanel(new panelHome(this));
 			//contentPane.add(panelQlySach);
 			//panelQlySach.setVisible(false);
 			//them Menu Home	

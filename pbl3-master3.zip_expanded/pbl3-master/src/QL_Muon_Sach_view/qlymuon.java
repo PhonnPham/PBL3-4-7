@@ -5,21 +5,35 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
-import Menu.QlySach;
+import Menu.CapNhapTTSach;
+import Menu.*;
+import Menu.XemTTSach;
+import Model.*;
 import gdDN.DNhap;
+import raven.cell.TableActionCellEditor;
+import raven.cell.TableActionCellRender;
+import raven.cell.TableActionEvent;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class qlymuon extends JFrame {
 
@@ -27,6 +41,13 @@ public class qlymuon extends JFrame {
 	private JPanel contentPane,panelMenu;
 	private JTable table;
 	private qlymuon qlm = this;
+	private PhieuDAO PhieuDAO;
+	private ArrayList<phieumuon> listPhieu;
+	private DefaultTableModel tableModel;
+	private TableActionEvent event;
+	private int edit = -1;
+	private JTextField txtNhap;
+	private JComboBox comboBox;
 	/**
 	 * Launch the application.
 	 */
@@ -44,13 +65,77 @@ public class qlymuon extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
-	public qlymuon() {
+	public qlymuon()
+	{
+		 	initComponents();
+		    PhieuDAO = new PhieuDAO();
+		    listPhieu = new ArrayList<>();
+		    tableModel = (DefaultTableModel) table.getModel();
+			PhieuDAO.getInstance().selectAll(listPhieu);
+		    showListPhieu();
+	}
+	private void showListPhieu() {
+		event = new TableActionEvent() {
+			
+			@Override
+			public void onView(int row) {
+				if(row >= 0 && row < listPhieu.size())
+				{
+					phieumuon selectedPhieu =  listPhieu.get(row);
+					//XemTTSach xem =  new XemTTSach(parentFrame,true,selectedBook,pn);
+					//xem.setVisible(true);
+				}
+			}
+			@Override
+			public void onEdit(int row) {
+				edit = row;
+				if(row >= 0 && row < listPhieu.size())
+				{
+					phieumuon selectedPhieu =  listPhieu.get(row);
+					//CapNhapTTSach up =  new CapNhapTTSach(parentFrame,true,selectedBook, pn);
+					//up.setVisible(true);
+				}
+			}		
+			@Override
+			public void onDelete(int row) {
+				phieumuon selectedPhieu =  listPhieu.get(row);
+				 int result = JOptionPane.showConfirmDialog(qlm, "Bạn có chắc muốn xóa không?", "Thông Báo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		            if (result == JOptionPane.YES_OPTION) {
+		            	PhieuDAO.getInstance().Delete(selectedPhieu);
+		                listPhieu.remove(selectedPhieu);
+		                tableModel.setRowCount(0); // Xóa dữ liệu từ mô hình hiện tại
+		                tableModel.fireTableDataChanged(); // Cập nhật hiển thị của bảng
+		                JOptionPane.showMessageDialog(qlm, "Xóa thành công");
+		                showListPhieu();
+		            }
+			}
+		};
+        tableModel.setRowCount(0);
+        //int stt = 1;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        for (phieumuon e : listPhieu) {
+            Object[] row = new Object[]{ e.get_id_phieu(),e.get_id_docgia(),
+                e.get_id_sach(), dateFormat.format(e.get_ngaymuon()), e.getGiveBookBack()
+                };
+            tableModel.addRow(row);
+            tableModel.fireTableDataChanged();
+            table.setRowHeight(45);
+	        table.setModel(tableModel);
+	        table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellRenderer(new TableActionCellRender());
+	        table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellEditor(new TableActionCellEditor(event));
+            
+	        table.getColumnModel().getColumn(0).setPreferredWidth(50);
+	        table.getColumnModel().getColumn(1).setPreferredWidth(80);
+	        table.getColumnModel().getColumn(5).setPreferredWidth(100);
+        }
+
+    }
+	
+	private void initComponents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 842, 614);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(69, 167, 157));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
@@ -128,14 +213,14 @@ public class qlymuon extends JFrame {
 		contentPane.add(lblNewLabel);
 		
 		JButton btnGhiPhieuMuon = new JButton("Ghi phiếu mượn");
-		btnGhiPhieuMuon.setBackground(new Color(250, 250, 250));
+		btnGhiPhieuMuon.setBackground(new Color(192, 192, 192));
 		btnGhiPhieuMuon.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				qlm.setVisible(false);
-				ghi_nhan_muon_sach ghi = new ghi_nhan_muon_sach();
-				ghi.setVisible(true);
-				ghi.setLocationRelativeTo(null);
-				
+//				qlm.setVisible(false);
+//				ghi_nhan_muon_sach ghi = new ghi_nhan_muon_sach(qlm);
+//				ghi.setVisible(true);
+//				ghi.setLocationRelativeTo(null);
+//				
 			}
 		});
 		btnGhiPhieuMuon.setFont(new Font("Tahoma", Font.PLAIN, 20));
@@ -147,7 +232,194 @@ public class qlymuon extends JFrame {
 		contentPane.add(scrollPane);
 		
 		table = new JTable();
+		table.setFont(new java.awt.Font("Times New Roman", 0, 14));
+		table.setModel(new DefaultTableModel(new Object[][] {
+
+		}, new String[] {"ID Phiếu", "ID Độc Giả", "ID Sách", "Ngày Mượn", "Tình Trạng", "Hành Động"}) {
+			boolean[] canEdit = new boolean[] { false, false, false,false,false, true };
+
+			public boolean isCellEditable(int rowIndex, int columnIndex) {
+				return canEdit[columnIndex];
+			}
+		});
 		scrollPane.setViewportView(table);
 		
+		txtNhap = new JTextField();
+		txtNhap.setBounds(365, 114, 206, 19);
+		contentPane.add(txtNhap);
+		txtNhap.setColumns(10);
+		
+		comboBox = new JComboBox();
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"ID Phiếu", "ID Độc Giả"}));
+		comboBox.setBounds(576, 115, 85, 21);
+		contentPane.add(comboBox);
+		
+		JButton btnNewButton = new JButton("Tim");
+		btnNewButton.setBackground(new Color(128, 128, 128));
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String t =  txtNhap.getText();
+				try {
+					if(!t.isEmpty())
+					{
+						if(comboBox.getSelectedItem().equals("ID Phiếu"))
+						{
+							phieumuon  rb =  PhieuDAO.getInstance().seachRegisterId(listPhieu, t);
+//							if(rb != null)
+//						//	showSeachPhieuID(rb);
+//							else
+//							{
+								JOptionPane.showMessageDialog(contentPane, "Mã tìm thấy ID phiếu phù hợp");
+								txtNhap.setText(null);
+							//}
+						}
+						if(comboBox.getSelectedItem().equals("ID Độc Giả"))
+						{
+						//	ArrayList<RegisterBook> listSearchRB =  PhieuDAO.getInstance().searchDGID(listPhieu, t);
+//							if(listSearchRB.size() > 0 )
+//								showSearchDG(listSearchRB);
+//							else
+//							{
+								JOptionPane.showMessageDialog(contentPane, "Không tìm thấy mã độc giả phù hợp");
+								txtNhap.setText(null);
+							}
+						}
+					//}
+					else
+					JOptionPane.showMessageDialog(contentPane, "Bạn chưa nhập dữ liệu tìm kiếm","Thông Báo",JOptionPane.OK_OPTION);
+					
+					
+				} catch (Exception e2) {
+					
+				}
+			}
+		});
+		btnNewButton.setBounds(661, 113, 78, 25);
+		contentPane.add(btnNewButton);
+		
+		JButton btnNewButton_1 = new JButton("Làm mới");
+		btnNewButton_1.setBackground(new Color(113, 193, 165));
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				txtNhap.setText(null);
+				listPhieu.clear();
+				PhieuDAO.getInstance().selectAll(listPhieu);
+				showListPhieu();
+			}
+		});
+		btnNewButton_1.setBounds(661, 513, 82, 38);
+		contentPane.add(btnNewButton_1);
+		
+	}
+	private void showSeachPhieuID(phieumuon b) {
+	    TableActionEvent event2 = new TableActionEvent() {
+	        @Override
+	        public void onView(int row) {
+	            if(row >= 0 && row < listPhieu.size()) {
+
+	            }
+	        }
+
+	        @Override
+	        public void onEdit(int row) {
+	            edit = row;
+	            if(row >= 0 && row < listPhieu.size()) {
+
+	            }
+	        }
+
+	        @Override
+	        public void onDelete(int row) {
+	            int result = JOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa không?", "Thông Báo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+	            if (result == JOptionPane.YES_OPTION) {
+	                PhieuDAO.getInstance().Delete(b);
+	                listPhieu.remove(b);
+	                tableModel.setRowCount(0);
+	                tableModel.fireTableDataChanged();
+	                JOptionPane.showMessageDialog(contentPane, "Xóa thành công");
+	                showListPhieu();
+	            }
+	        }
+	    };
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	    tableModel.setRowCount(0);
+	    Object[] row = new Object[]{ b.get_id_phieu(), b.get_id_docgia(), b.get_id_sach(),dateFormat.format(b.get_ngaymuon()),b.getGiveBookBack() };
+	    tableModel.addRow(row);
+	    tableModel.fireTableDataChanged();
+	    table.setRowHeight(45);
+	    table.setModel(tableModel);
+	    table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellRenderer(new TableActionCellRender());
+	    table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellEditor(new TableActionCellEditor(event2));
+	    table.getColumnModel().getColumn(0).setPreferredWidth(50);
+        table.getColumnModel().getColumn(1).setPreferredWidth(80);
+        table.getColumnModel().getColumn(5).setPreferredWidth(100);
+	}
+	private void showSearchDG(ArrayList<phieumuon> listSearchRb)
+	{
+		
+			TableActionEvent event3 = new TableActionEvent() {
+				
+				@Override
+				public void onView(int row) {
+					if(row >= 0 && row < listSearchRb.size())
+					{
+
+					}
+					
+				}
+				
+				@Override
+				public void onEdit(int row) {
+					edit = row;
+					if (row >= 0 && row < listSearchRb.size()) {
+
+					}
+					
+				}
+				
+				@Override
+				public void onDelete(int row) {
+					int result = JOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa không?", "Thông Báo",
+							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if (result == JOptionPane.YES_OPTION) {
+						PhieuDAO.getInstance().Delete(listSearchRb.get(row));
+						listSearchRb.remove(row);
+
+		                tableModel.fireTableDataChanged(); 
+		                tableModel.setRowCount(0);
+		                listPhieu.clear();
+		                PhieuDAO.getInstance().selectAll(listPhieu);
+		                showListPhieu();
+		                
+		                
+		                tableModel.fireTableDataChanged(); 
+		                JOptionPane.showMessageDialog(contentPane, "Xóa thành công");
+		                txtNhap.setText(null);
+					}
+					
+				}
+			};
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			tableModel.setRowCount(0);
+			for (phieumuon e : listSearchRb) {
+				Object[] row = new Object[]{ e.get_id_phieu(),e.get_id_docgia(),
+		                e.get_id_sach(), dateFormat.format(e.get_ngaymuon()), e.getGiveBookBack()
+		                };
+				tableModel.addRow(row);
+				tableModel.fireTableDataChanged();
+				table.setRowHeight(45);
+				table.setModel(tableModel);
+				table.getColumnModel().getColumn(tableModel.getColumnCount() - 1)
+						.setCellRenderer(new TableActionCellRender());
+				
+				table.getColumnModel().getColumn(tableModel.getColumnCount() - 1)
+						.setCellEditor(new TableActionCellEditor(event3));
+
+				 table.getColumnModel().getColumn(0).setPreferredWidth(50);
+			     table.getColumnModel().getColumn(1).setPreferredWidth(80);
+			     table.getColumnModel().getColumn(5).setPreferredWidth(100);
+
+			}
+
 	}
 }

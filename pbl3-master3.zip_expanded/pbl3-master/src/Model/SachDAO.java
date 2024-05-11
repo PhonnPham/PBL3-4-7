@@ -12,7 +12,6 @@ import javax.sql.DataSource;
 import com.mysql.cj.jdbc.MysqlDataSource;
 
 import DAO.*;
-import book_model.*;
 
 public class SachDAO implements DAOInterface<Sach> {
 	
@@ -78,7 +77,19 @@ public class SachDAO implements DAOInterface<Sach> {
         }
         return -1;
     }
-
+	public int UpdateSL(Sach t) {
+		DataSource data = ketNoiSQL();
+        try ( Connection conn = data.getConnection()) {
+            String query = "UPDATE book SET Soluong_sach = ? WHERE Id_sach = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, t.get_soluong());
+            ps.setInt(2, t.get_id_sach());
+            int result = ps.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return -1;
+    }
 
 	@Override
 	public int Delete(Sach t) {
@@ -237,5 +248,31 @@ public class SachDAO implements DAOInterface<Sach> {
 	      } 
 	      return searchResult;
 	  }
+	  public Sach selectedId(int id) {
+		    Sach result = null;
+		    String query = "SELECT * FROM book WHERE Id_sach = ?";
+		    try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/pbl3", "root", "");
+		         PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+		        preparedStatement.setInt(1, id);
+		        ResultSet resultSet = preparedStatement.executeQuery();
+		        if (resultSet.next()) {
+		            int id_sach = resultSet.getInt("Id_sach");
+		            int id_tacgia = resultSet.getInt("Id_tacgia");
+		            String tacgia = resultSet.getString("Tac_gia");
+		            String tensach = resultSet.getString("Name_sach");
+		            String theloai = resultSet.getString("Theloai_sach");
+		            String nhaxb = resultSet.getString("NhaXB");
+		            String namxb = resultSet.getString("NamXB");
+		            int soluong = resultSet.getInt("Soluong_sach");
+		            result = new Sach(id_sach, id_tacgia, tacgia, tensach, theloai, nhaxb, namxb, soluong);
+		        }	
+
+		    } catch (SQLException ex) {
+		        ex.printStackTrace();
+		    }catch (InValidAuthorException ex) {
+	            ex.printStackTrace();
+	         }
+		    return result;
+		}
 
 }

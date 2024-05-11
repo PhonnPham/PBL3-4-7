@@ -40,7 +40,7 @@ public class HoadonDAO implements DAOInterface<Hoadon> {
             ps.setInt(1, t.get_id_hoadon());
             ps.setInt(2, t.get_id_tt());
             ps.setInt(3, t.get_id_phieu());
-            ps.setDate(4, (Date) t.get_ngayttoan());
+            ps.setDate(4,new java.sql.Date(t.get_ngayttoan().getTime()));
             ps.setInt(5, t.get_tongtien());
             int result = ps.executeUpdate();
 

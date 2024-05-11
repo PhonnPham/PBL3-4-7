@@ -14,14 +14,15 @@ import javax.swing.SwingConstants;
 
 import QL_Muon_Sach_view.*;
 import gdDN.DNhap;
-import Đoc_gia.ql_nguoi_muon;
+import doc_gia.*;
 
 public class panelMenu extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	public home parentFrame;
 	public panelQlySach pnQlySach = new panelQlySach(parentFrame);
-	public panelQlymuon qlymuon = new panelQlymuon();
+	public panelQlymuon qlymuon = new panelQlymuon(parentFrame);
+	public panelQlydocgia qlydocgia = new panelQlydocgia(parentFrame);
 	/**
 	 * Create the panel.
 	 */
@@ -96,13 +97,15 @@ public class panelMenu extends JPanel {
 		lbl3.setBounds(10, 263, 207, 55);
 		this.add(lbl3);
 		
-		JLabel lbl5 = new JLabel("Quản lý người mượn");
+		JLabel lbl5 = new JLabel("Quản lý độc giả");
 		lbl5.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				updatehome(false);
-				ql_nguoi_muon qlynguoimuon = new ql_nguoi_muon();
-				qlynguoimuon.setVisible(true);
+				
+			//	ql_nguoi_muon qlynguoimuon = new ql_nguoi_muon();
+			//	qlynguoimuon.setVisible(true);
+				qlydocgia.setVisible(true);
+				parentFrame.AddPanel(qlydocgia);
 			}
 		});
 		lbl5.setIcon(new ImageIcon("C:\\Users\\hoang\\OneDrive\\Documents\\Pictures\\Ảnh cho pbl3\\people manage.png"));

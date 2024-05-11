@@ -151,7 +151,37 @@ public class DocgiaDAO implements DAOInterface<Docgia>{
         return listDocgia;
 	}
 	
+	public Docgia selectedId(int t) {
+		Docgia result = null;
+        String query = "SELECT * FROM docgia WHERE Id_docgia = ?";
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/pbl3", "root", "");
+             PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setInt(1, t);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                int id = resultSet.getInt("Id_docgia");
+                String hoten = resultSet.getString("Name_docgia");
+                Date ns = resultSet.getDate("Ns_docgia");
+                String diachi = resultSet.getString("Dc_docgia");
+                String sdt = resultSet.getString("Sdt_docgia"); 
+                result = new Docgia(id, hoten, ns, diachi, sdt);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return result;
+	}
+	  public Docgia seachDGId(ArrayList<Docgia> listDG, String t) {
+		  	int a = Integer.parseInt(t);
+	    	if(a < 0) return null;
+	        for (Docgia e : listDG) {
+	            if (e.get_id() ==  a) {
+	                return e;
+	            }
+	        }
+	        return null;
 
+	    }
 	
 
 }
