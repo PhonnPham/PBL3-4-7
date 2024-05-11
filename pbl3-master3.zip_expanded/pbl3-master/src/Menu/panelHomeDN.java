@@ -17,7 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-public class panelHome extends JPanel {
+public class panelHomeDN extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private home parentFrame;
@@ -32,7 +32,7 @@ public class panelHome extends JPanel {
 	/**
 	 * Create the frame.
 	 */
-	public panelHome(home parentFrame) {
+	public panelHomeDN(home parentFrame) {
 		new JPanel();
 		this.setBounds(238, 0, 580, 575);
 		this.parentFrame = parentFrame;
@@ -92,10 +92,10 @@ public class panelHome extends JPanel {
 		JButton btnNewButton = new JButton("Tra cứu sách");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				parentFrame.setVisible(false);
-				timkiemsach timkiem =  new timkiemsach();
-				timkiem.setVisible(true);
-				timkiem.setLocationRelativeTo(null);
+//				home.setVisible(false);
+//				timkiem_sach timkiem =  new timkiem_sach();
+//				timkiem.setVisible(true);
+//				timkiem.setLocationRelativeTo(null);
 				
 			}
 		});

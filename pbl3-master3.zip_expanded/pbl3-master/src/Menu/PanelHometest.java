@@ -119,8 +119,8 @@ public class PanelHometest extends JFrame {
 		JButton btnNewButton_1 = new JButton("Đăng nhập");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dn = new DNhap();
-				dn.setVisible(true);
+			//	dn = new DNhap(parentFrame);
+			//	dn.setVisible(true);
 			}
 		});
 		btnNewButton_1.setBounds(692, 20, 126, 31);

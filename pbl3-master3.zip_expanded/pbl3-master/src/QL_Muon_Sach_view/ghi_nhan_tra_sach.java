@@ -46,6 +46,7 @@ public class ghi_nhan_tra_sach extends JDialog {
 	private panelQlymuon qlm;
 	private Sach Sach;
 	private Docgia Docgia;
+	
 	private phieumuon phieu;
 	private ArrayList<phieumuon> listphieu;
 	private ArrayList<Hoadon> listhoadon;	

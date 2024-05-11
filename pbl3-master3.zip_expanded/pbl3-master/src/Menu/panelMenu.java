@@ -118,8 +118,8 @@ public class panelMenu extends JPanel {
 		lbl6.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				updatehome(false);				
-				DNhap DN = new DNhap();
+								
+				DNhap DN = new DNhap(parentFrame);
 				DN.setVisible(true);	
 			}
 	});

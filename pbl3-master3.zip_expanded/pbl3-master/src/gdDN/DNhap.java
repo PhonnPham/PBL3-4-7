@@ -1,9 +1,14 @@
-package gdDN;
+	package gdDN;
 import Menu.*;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -35,29 +40,21 @@ public class DNhap extends JFrame {
 	private boolean isVisible = false;
 	private char defaultEchoChar = '\u2022'; // '*' character
 	private JFrame DN = this;
+	private boolean check = false;
+	private home parentpn;
+
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					DNhap frame = new DNhap();
-					frame.setVisible(true);
-					frame.setLocationRelativeTo(null);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
 	 */
 	
 	
-	public DNhap() {
+	public DNhap(home parentpn) {
+		this.parentpn = parentpn;
+		parentpn.setVisible(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 808, 549);
 		contentPane = new JPanel();
@@ -144,33 +141,16 @@ public class DNhap extends JFrame {
 		btnDangNhap.setBackground(new Color(74, 196, 125));
 		btnDangNhap.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String a = "abcde";
-				String b = "12345678";
-				
-				String log = login.getText();
-				String pas = new String( pass.getPassword());
-				if(log.isEmpty() || pas.isEmpty())
-				{
-					JOptionPane.showMessageDialog(contentPane, "Chưa nhập mật khẩu hoặc tài khoản", "Lỗi",JOptionPane.ERROR_MESSAGE);
-
-				}
-				else if(pas.length() < 8)
-				{
-					JOptionPane.showMessageDialog(contentPane, "Độ dài tối thiểu của mật khẩu phải là 8 ký tự trở lên", "Thông Báo",JOptionPane.ERROR_MESSAGE);
-				}
-				else if(log.endsWith(a) && pas.endsWith(b))
-				{
-					JOptionPane.showMessageDialog(contentPane, "Đăng Nhập thành công", "Thông Báo",JOptionPane.INFORMATION_MESSAGE);
-					DN.setVisible(false);
-					
-					home h =new home();
-					h.setVisible(true);
-					h.setLocationRelativeTo(null);
-				}
-				else
-				{
-					JOptionPane.showMessageDialog(contentPane, "TK hoặc MK chưa chính xác", "Thông Báo",JOptionPane.ERROR_MESSAGE);
-				}
+				String username = login.getText();
+                String password = new String(pass.getPassword());
+                if (authenticate1(username, password) || authenticate2(username, password) ) {
+                    JOptionPane.showMessageDialog(contentPane, "Đăng Nhập thành công", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+                    DN.setVisible(false);
+                    check = true;
+                    parentpn.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Tên đăng nhập hoặc mật khẩu không đúng", "Thông Báo", JOptionPane.ERROR_MESSAGE);
+                }
 			}
 		});
 		btnDangNhap.setBounds(344, 377, 345, 80);
@@ -178,4 +158,30 @@ public class DNhap extends JFrame {
 	
 		
 	}
+	public boolean authenticate1(String username, String password) {
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/pbl3", "root", "");
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM thuthu WHERE Username_tt = ? AND Password_tt = ?");
+            statement.setString(1, username);
+            statement.setString(2, password);
+            ResultSet rs = statement.executeQuery();
+            return rs.next(); 
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+	public boolean authenticate2(String username, String password) {
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/pbl3", "root", "");
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM admin WHERE Username_ad = ? AND Password_ad = ?");
+            statement.setString(1, username);
+            statement.setString(2, password);
+            ResultSet rs = statement.executeQuery();
+            return rs.next(); 
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
