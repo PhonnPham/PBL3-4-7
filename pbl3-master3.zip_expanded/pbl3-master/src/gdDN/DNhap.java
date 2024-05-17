@@ -28,6 +28,7 @@ import gdDN.jP;
 import gdDN.jT;
 
 import java.awt.Component;
+import Model.*;
 
 public class DNhap extends JFrame {
 
@@ -40,8 +41,10 @@ public class DNhap extends JFrame {
 	private boolean isVisible = false;
 	private char defaultEchoChar = '\u2022'; // '*' character
 	private JFrame DN = this;
-	private boolean check = false;
+	public boolean check = false;
 	private home parentpn;
+	private	ThuthuDAO ttDAO;
+	private panelMenu menu;
 
 	/**
 	 * Launch the application.
@@ -52,7 +55,7 @@ public class DNhap extends JFrame {
 	 */
 	
 	
-	public DNhap(home parentpn) {
+	public DNhap(home parentpn, panelMenu menu) {
 		this.parentpn = parentpn;
 		parentpn.setVisible(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -63,7 +66,7 @@ public class DNhap extends JFrame {
 		
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+		ttDAO = new ThuthuDAO();
 		lblQL = new JLabel("Quản Lý Thư Viện");
 		lblQL.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		lblQL.setHorizontalAlignment(SwingConstants.CENTER);
@@ -143,12 +146,25 @@ public class DNhap extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String username = login.getText();
                 String password = new String(pass.getPassword());
-                if (authenticate1(username, password) || authenticate2(username, password) ) {
-                    JOptionPane.showMessageDialog(contentPane, "Đăng Nhập thành công", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+                if (authenticate1(username, password) ) {
+                    JOptionPane.showMessageDialog(contentPane, "Đăng Nhập thành công với vai trò thủ thư", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
                     DN.setVisible(false);
-                    check = true;
+                    setCheck(true);
+                    menu.check = isCheck();
+                    parentpn.tt=ttDAO.getInstance().selectByName(username);
+                    parentpn.Flag = false;
                     parentpn.setVisible(true);
-                } else {
+                } else if(authenticate2(username, password)) {
+                	JOptionPane.showMessageDialog(contentPane, "Đăng Nhập thành công với vai trò ADMIN", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+                    DN.setVisible(false);
+                    setCheck(true);
+                    //parentpn.tt=ttDAO.getInstance().selectByName(username);
+                    parentpn.Flag = true;
+                    parentpn.setVisible(true);
+                    }
+                
+                	else {
+                
                     JOptionPane.showMessageDialog(contentPane, "Tên đăng nhập hoặc mật khẩu không đúng", "Thông Báo", JOptionPane.ERROR_MESSAGE);
                 }
 			}
@@ -184,4 +200,10 @@ public class DNhap extends JFrame {
             return false;
         }
     }
+	public boolean isCheck() {
+		return check;
+	}
+	public void setCheck(boolean check) {
+		this.check = check;
+	}
 }

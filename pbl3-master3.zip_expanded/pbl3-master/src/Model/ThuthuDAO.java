@@ -118,7 +118,30 @@ public class ThuthuDAO implements DAOInterface<Thuthu> {
         }
         return result;
 	}
-
+	public Thuthu selectByName(String s) {
+		Thuthu result = null;
+        String query = "SELECT * FROM thuthu WHERE Username_tt = ?";
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/pbl3", "root", "");
+             PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setString(1, s);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+            	int id = resultSet.getInt(1);
+                String hoten = resultSet.getString(2);
+                Date ns = resultSet.getDate(3);
+                String diachi = resultSet.getString(4);
+                String cccd = resultSet.getString(5);
+                String sdt = resultSet.getString(6);
+                String email = resultSet.getString(7);
+                String username = resultSet.getString(8);
+                String password = resultSet.getString(9); 
+                result = new Thuthu(id, hoten, ns, diachi, cccd, sdt, email, username, password);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return result;
+	}
 	@Override
 	public ArrayList<Thuthu> selectByCondition(String condition) {
 		ArrayList<Thuthu> listThuthu = new ArrayList<>();

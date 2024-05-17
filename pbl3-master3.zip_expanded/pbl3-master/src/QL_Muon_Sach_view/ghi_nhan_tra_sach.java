@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -35,18 +36,20 @@ import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
 
 import gdDN.*;
+import javax.swing.JTextArea;
 public class ghi_nhan_tra_sach extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField txtNgayTre,txtPhatTre,txtTinhtrang,txtPhatHong;
-	private jT txtTieuDe,txtSoLuong,txtTenNM,txtThuThu,txtIDsach,txtIDDocgia;
+	private JTextField txtPhatTre;
+	private jT txtTieuDe,txtSoLuong,txtTenNM,txtThuThu,txtIDsach,txtIDDocgia, txtTinhrrang;
 	private JTextField txtTong;
 	private JComboBox comboBoxIDPhieu,comboBox ;
 	private panelQlymuon qlm;
+	
+	private home home;
 	private Sach Sach;
 	private Docgia Docgia;
-	
 	private phieumuon phieu;
 	private ArrayList<phieumuon> listphieu;
 	private ArrayList<Hoadon> listhoadon;	
@@ -57,6 +60,12 @@ public class ghi_nhan_tra_sach extends JDialog {
 	private JDateChooser dateChooserNM,dateChooserNhT,dateChooserNT_1;
 	private int idp,idhd;
 	private int phat =  0, phattinhtrang = 0, tongphat = 0 ;
+	private JComboBox comboBoxTTSach;
+	private ttSachDAO ttDAO;
+	private ArrayList<ttSach> listTT;
+	private ThuthuDAO thuthuDAO; 
+	private JTextField txtTinhtrang;
+    
 	/**
 	 * Launch the application.
 	 */
@@ -80,6 +89,7 @@ public class ghi_nhan_tra_sach extends JDialog {
 	public ghi_nhan_tra_sach(panelQlymuon qlm) {
 		
 		this.qlm = qlm;
+		this.home = qlm.parentFrame;
 		initComponents();
 		Sach = new Sach();
 		Docgia = new Docgia();
@@ -92,12 +102,16 @@ public class ghi_nhan_tra_sach extends JDialog {
 		 PhieuDAO.getInstance().selectAll(listphieu);
 		 hoadonDAO.getInstance().selectAll(listhoadon);
 		 setccbIDPhieu();
+		 setccbTinhtrang();
 		 idp = setIDPhieu(listphieu);
 		 idhd = setIDHoadon(listhoadon);
+		 thuthuDAO = new ThuthuDAO();
 	}
-public ghi_nhan_tra_sach(panelQlymuon qlm, int id) {
-		
+public ghi_nhan_tra_sach(home frame,panelQlymuon qlm, int id) {
+		super(frame, true);
 		this.qlm = qlm;
+		this.home = frame;
+		//parentFrame = qlm.parentFrame;	
 		initComponents();
 		Sach = new Sach();
 		Docgia = new Docgia();
@@ -110,8 +124,10 @@ public ghi_nhan_tra_sach(panelQlymuon qlm, int id) {
 		 PhieuDAO.getInstance().selectAll(listphieu);
 		 hoadonDAO.getInstance().selectAll(listhoadon);
 		 setccbIDPhieu(id);
+		 setccbTinhtrang();
 		 idp = setIDPhieu(listphieu);
 		 idhd = setIDHoadon(listhoadon);
+		 thuthuDAO = new ThuthuDAO();
 		 
 	}
 	private int setIDPhieu(ArrayList<phieumuon> listRB)
@@ -158,14 +174,26 @@ public ghi_nhan_tra_sach(panelQlymuon qlm, int id) {
 		
 	}
 	private void setccbIDPhieu(int id) {
-		for(phieumuon p :listphieu) {
+		for(phieumuon p :listphieu) {	
 			if("Chưa Trả".equals(p.getGiveBookBack())){
 			comboBoxIDPhieu.addItem(p.get_id_phieu());
-					if(p.get_id_phieu() == id) comboBoxIDPhieu.setSelectedItem(id);
+			if(p.get_id_phieu() == id) comboBoxIDPhieu.setSelectedItem(id);
 			}
 		}
-		
 	}
+	private void setccbTinhtrang() {
+		 ArrayList<String> mucDoList = new ArrayList<>();
+		    mucDoList.add("0%");
+		    ttDAO = new ttSachDAO();
+		    listTT = new ArrayList<ttSach>();
+		     ttDAO.getInstance().selectAll(listTT);
+		     for(ttSach e: listTT) {
+		    	 mucDoList.add(e.getMucdo());
+		     }
+		    
+		     comboBoxTTSach.setModel(new DefaultComboBoxModel<>(mucDoList.toArray(new String[0])));
+	}
+
 	private void LoadData() {
 		String selectIDphieu = String.valueOf(comboBoxIDPhieu.getSelectedItem());
 		for(phieumuon p :listphieu) {
@@ -184,76 +212,11 @@ public ghi_nhan_tra_sach(panelQlymuon qlm, int id) {
 		dateChooserNM.setDate(phieu.get_ngaymuon());
 		dateChooserNhT.setDate(phieu.get_ngaytra());
 		
+		//txtThuThu.setText(thuthuDAO.getInstance().selectByName("thanh").get_hoten());
+		txtThuThu.setText(home.tt.get_hoten());
+		
 	}
-// private void setcbbIDSach()
-//	{
-//		for(Sach s : listSach)
-//		{
-//			cbbIdSach.addItem(s.get_id_sach());
-//		}
-//		//lấy id sách được chọn
-//		String selectID =  String.valueOf(cbbIdSach.getSelectedItem()); 
-//		
-//		Sach selectBook = SachDao.getInstance().seachBookId(listSach, selectID);
-//		if(selectBook != null)
-//		{
-//			txtTieuDe.setText(selectBook.get_tensach());
-//			txtTacGia.setText(selectBook.get_tacgia());
-//		}
-//		//Thêm sự kiện cho cbb
-//		cbbIdSach.addActionListener(new ActionListener() {
-//			
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				
-//				//lấy id sách được chọn
-//				String selectID =  String.valueOf(cbbIdSach.getSelectedItem()); 
-//				
-//				Sach selectBook = SachDao.getInstance().seachBookId(listSach, selectID);
-//				if(selectBook != null)
-//				{
-//					txtTieuDe.setText(selectBook.get_tensach());
-//					txtTacGia.setText(selectBook.get_tacgia());
-//				}
-//			}
-//		});
-//		
-//	}
-//private void setcbbIDDG()
-//{
-//	
-//	
-//	 
-//	for(Docgia d : listDG)
-//	{
-//		cbbIdDG.addItem(d.get_id());
-//	}
-//	String selectID =  String.valueOf(cbbIdDG.getSelectedItem()); 
-//	
-//	Docgia selectDG = DocgiaDAO.getInstance().seachDGId(listDG, selectID);
-//	if(selectDG != null)
-//	{
-//		txtHoTen.setText(selectDG.get_hoten());
-//		txtSDT.setText(selectDG.get_sdt());
-//	}
-//	//Thêm sự kiện cho cbb
-//	cbbIdDG.addActionListener(new ActionListener() {
-//		
-//		@Override
-//		public void actionPerformed(ActionEvent e) {
-//			
-//			//lấy id sách được chọn
-//			String selectID =  String.valueOf(cbbIdDG.getSelectedItem()); 
-//			
-//			Docgia selectDG = DGDao.getInstance().seachDGId(listDG, selectID);
-//			if(selectDG != null)
-//			{
-//				txtHoTen.setText(selectDG.get_hoten());
-//				txtSDT.setText(selectDG.get_sdt());
-//			}
-//		}
-//	});
-//}
+
 	private void initComponents() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1027, 660);
@@ -303,47 +266,37 @@ public ghi_nhan_tra_sach(panelQlymuon qlm, int id) {
 	
 	JLabel lblNewLabel_6 = new JLabel("Phạt trình trạng(nếu có)");
 	lblNewLabel_6.setFont(new Font("Tahoma", Font.PLAIN, 15));
-	lblNewLabel_6.setBounds(10, 227, 215, 26);
+	lblNewLabel_6.setBounds(10, 227, 165, 26);
 	panelTTTra.add(lblNewLabel_6);
 	
-	txtNgayTre = new JTextField();
-	txtNgayTre.setBounds(16, 345, 93, 39);
-	panelTTTra.add(txtNgayTre);
-	txtNgayTre.setColumns(10);
-	
 	txtPhatTre = new JTextField();
-	txtPhatTre.setBounds(133, 345, 184, 39);
+	txtPhatTre.setBounds(111, 390, 206, 39);
 	panelTTTra.add(txtPhatTre);
 	txtPhatTre.setColumns(10);
 	
 	txtTinhtrang = new JTextField();
-	txtTinhtrang.setBounds(16, 256, 93, 39);
+	txtTinhtrang.setBounds(187, 222, 120, 39);
 	panelTTTra.add(txtTinhtrang);
 	txtTinhtrang.setColumns(10);
-	
-	txtPhatHong = new JTextField();
-	txtPhatHong.setBounds(133, 256, 184, 39);
-	panelTTTra.add(txtPhatHong);
-	txtPhatHong.setColumns(10);
 	
 	JLabel lblNewLabel_3_1 = new JLabel("Id Phiếu");
 	lblNewLabel_3_1.setFont(new Font("Tahoma", Font.PLAIN, 15));
 	lblNewLabel_3_1.setBounds(16, 37, 60, 32);
 	panelTTTra.add(lblNewLabel_3_1);
 	
-	JLabel lblNewLabel_6_1 = new JLabel("Phạt trễ hạn (nếu có)");
+	JLabel lblNewLabel_6_1 = new JLabel("Phạt trễ hạn:");
 	lblNewLabel_6_1.setFont(new Font("Tahoma", Font.PLAIN, 15));
-	lblNewLabel_6_1.setBounds(10, 307, 215, 26);
+	lblNewLabel_6_1.setBounds(6, 395, 93, 26);
 	panelTTTra.add(lblNewLabel_6_1);
 	
 	txtTong = new JTextField();
 	txtTong.setColumns(10);
-	txtTong.setBounds(133, 413, 184, 39);
+	txtTong.setBounds(111, 441, 184, 39);
 	panelTTTra.add(txtTong);
 	
 	JLabel lblNewLabel_6_1_1 = new JLabel("Tổng Phạt");
 	lblNewLabel_6_1_1.setFont(new Font("Tahoma", Font.PLAIN, 15));
-	lblNewLabel_6_1_1.setBounds(16, 418, 93, 26);
+	lblNewLabel_6_1_1.setBounds(10, 454, 93, 26);
 	panelTTTra.add(lblNewLabel_6_1_1);
 	
 	txtIDDocgia = new jT();
@@ -351,7 +304,7 @@ public ghi_nhan_tra_sach(panelQlymuon qlm, int id) {
 	txtIDDocgia.setColumns(10);
 	txtIDDocgia.setBorder(new EmptyBorder(20, 3, 5, 10));
 	txtIDDocgia.setBackground(new Color(250, 250, 250));
-	txtIDDocgia.setBounds(105, 74, 170, 32);
+	txtIDDocgia.setBounds(105, 70, 212, 43);
 	panelTTTra.add(txtIDDocgia);
 	
 	JLabel lblNewLabel_10 = new JLabel("Tên độc giả");
@@ -360,7 +313,7 @@ public ghi_nhan_tra_sach(panelQlymuon qlm, int id) {
 	lblNewLabel_10.setFont(new Font("Tahoma", Font.PLAIN, 15));
 	
 	txtTenNM = new jT();
-	txtTenNM.setBounds(105, 125, 170, 32);
+	txtTenNM.setBounds(105, 125, 212, 43);
 	panelTTTra.add(txtTenNM);
 	txtTenNM.setFont(new Font("Tahoma", Font.PLAIN, 15));
 	txtTenNM.setBackground(new Color(250, 250, 250));
@@ -388,7 +341,7 @@ public ghi_nhan_tra_sach(panelQlymuon qlm, int id) {
 	txtTieuDe.setFont(new Font("Tahoma", Font.PLAIN, 15));
 	txtTieuDe.setBackground(new Color(250, 250, 250));
 	txtTieuDe.setBorder(new EmptyBorder(20, 3, 5, 10));
-	txtTieuDe.setBounds(125, 98, 170, 32);
+	txtTieuDe.setBounds(125, 98, 170, 43);
 	panelTTNguoiMuon.add(txtTieuDe);
 	txtTieuDe.setColumns(10);
 	
@@ -401,26 +354,26 @@ public ghi_nhan_tra_sach(panelQlymuon qlm, int id) {
 	txtSoLuong.setFont(new Font("Tahoma", Font.PLAIN, 15));
 	txtSoLuong.setBackground(new Color(250, 250, 250));
 	txtSoLuong.setBorder(new EmptyBorder(20, 3, 5, 10));
-	txtSoLuong.setBounds(125, 149, 170, 32);
+	txtSoLuong.setBounds(125, 148, 170, 43);
 	panelTTNguoiMuon.add(txtSoLuong);
 	txtSoLuong.setColumns(10);
 	
 	JLabel lblNewLabel_11 = new JLabel("Thủ thư xác nhận");
 	lblNewLabel_11.setFont(new Font("Tahoma", Font.PLAIN, 15));
-	lblNewLabel_11.setBounds(20, 207, 121, 32);
+	lblNewLabel_11.setBounds(20, 220, 121, 32);
 	panelTTNguoiMuon.add(lblNewLabel_11);
 	
 	txtThuThu = new jT();
 	txtThuThu.setFont(new Font("Tahoma", Font.PLAIN, 15));
 	txtThuThu.setBackground(new Color(250, 250, 250));
 	txtThuThu.setBorder(new EmptyBorder(20, 3, 5, 10));
-	txtThuThu.setBounds(149, 207, 170, 32);
+	txtThuThu.setBounds(149, 207, 170, 43);
 	panelTTNguoiMuon.add(txtThuThu);
 	txtThuThu.setColumns(10);
 	
 	JLabel lblNewLabel_12 = new JLabel("Ngày mượn");
 	lblNewLabel_12.setFont(new Font("Tahoma", Font.PLAIN, 15));
-	lblNewLabel_12.setBounds(20, 251, 86, 32);
+	lblNewLabel_12.setBounds(20, 251, 86, 43);
 	panelTTNguoiMuon.add(lblNewLabel_12);
 	
 	dateChooserNM = new JDateChooser();
@@ -456,7 +409,7 @@ public ghi_nhan_tra_sach(panelQlymuon qlm, int id) {
 		                // lấy phạt trình trạng
 		                
 		          
-		                txtNgayTre.setText(String.valueOf(diffInDays +"ngày"));
+		                //txtNgayTre.setText(String.valueOf(diffInDays +"ngày"));
 		                //txtPhatTre.setText(String.valueOf(diffInDays * 2000));
 		            }
 		        }	
@@ -478,7 +431,7 @@ public ghi_nhan_tra_sach(panelQlymuon qlm, int id) {
 	lblNewLabel_3.setFont(new Font("Tahoma", Font.PLAIN, 15));
 	
 	txtIDsach = new jT();
-	txtIDsach.setBounds(125, 54, 170, 32);
+	txtIDsach.setBounds(125, 44, 170, 43);
 	panelTTNguoiMuon.add(txtIDsach);
 	txtIDsach.setFont(new Font("Tahoma", Font.PLAIN, 15));
 	txtIDsach.setColumns(10);
@@ -488,10 +441,32 @@ public ghi_nhan_tra_sach(panelQlymuon qlm, int id) {
 	comboBoxIDPhieu = new JComboBox();
 	comboBoxIDPhieu.setBounds(111, 42, 135, 26);
 	panelTTTra.add(comboBoxIDPhieu);
-	
-	JComboBox comboBoxTTSach = new JComboBox();
-	comboBoxTTSach.setBounds(158, 188, 135, 26);
+	//trang thai sach
+	comboBoxTTSach = new JComboBox();
+	comboBoxTTSach.addItemListener(new ItemListener() {
+		public void itemStateChanged(ItemEvent e) {
+			 ttDAO.getInstance().selectAll(listTT);
+			 for(ttSach b: listTT ) {
+				 if (b.getMucdo().equals(comboBoxTTSach.getSelectedItem())){
+					 txtTinhtrang.setText(String.valueOf(b.getPhiphat()));
+					 phattinhtrang = b.getPhiphat();
+					 break;
+				 }
+			 }
+			
+		}
+	});
+	comboBoxTTSach.setBounds(158, 183, 159, 31);
 	panelTTTra.add(comboBoxTTSach);
+	
+	JTextArea textArea = new JTextArea();
+	textArea.setBounds(10, 308, 297, 70);
+	panelTTTra.add(textArea);
+	
+	JLabel lblNewLabel_6_1_1_1 = new JLabel("Mô tả tình trạng");
+	lblNewLabel_6_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 15));
+	lblNewLabel_6_1_1_1.setBounds(10, 265, 113, 26);
+	panelTTTra.add(lblNewLabel_6_1_1_1);
 	comboBoxIDPhieu.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 	      LoadData();
@@ -520,7 +495,7 @@ public ghi_nhan_tra_sach(panelQlymuon qlm, int id) {
 			
 			 if(tongphat > 0) {
 		    	  //Hoadon(int _id_hoadon,int _id_tt,int _id_phieu, Date _ngayttoan, int _tongtien)
-		    	  Hoadon h = new Hoadon(++idhd,2,phieu.get_id_phieu(),dateChooserNT_1.getDate(),tongphat);
+		    	  Hoadon h = new Hoadon(++idhd,home.tt.get_id(),phieu.get_id_phieu(),dateChooserNT_1.getDate(),tongphat);
 		    	  hoadonDAO.Insert(h);
 		      }
 			dispose();

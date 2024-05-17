@@ -208,17 +208,12 @@ public class panelQlydocgia extends JPanel {
 	 
 	public void initComponents() {
 		new JPanel();
-		setBounds(238, 0, 580, 575);
 		//setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		 setBackground(new Color(129, 203, 196));
-		//contentPane = new JPanel();
-		//contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-		//setContentPane(contentPane);
 		this.setLayout(null);
-		setBounds(238, 0, 580, 575);
+		setBounds(275, 0, 975, 725);
 	
-	JLabel lblNewLabel = new JLabel("Quản lý người mượn");
+	JLabel lblNewLabel = new JLabel("Quản lý Độc giả");
 	lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
 	lblNewLabel.setBounds(48, 6, 197, 41);
 	this.add(lblNewLabel);
@@ -234,7 +229,7 @@ public class panelQlydocgia extends JPanel {
 	textField.setColumns(10);
 	
 	JScrollPane scrollPane = new JScrollPane();
-	scrollPane.setBounds(21, 225, 553, 300);
+	scrollPane.setBounds(21, 225, 768, 305);
 	this.add(scrollPane);
 	
 	table = new JTable();

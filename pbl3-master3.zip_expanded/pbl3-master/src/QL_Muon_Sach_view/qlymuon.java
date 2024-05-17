@@ -48,6 +48,7 @@ public class qlymuon extends JFrame {
 	private int edit = -1;
 	private JTextField txtNhap;
 	private JComboBox comboBox;
+	private String tenTT;
 	/**
 	 * Launch the application.
 	 */

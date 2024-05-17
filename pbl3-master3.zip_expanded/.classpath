@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="src" path="pbl3-master/src"/>
 	<classpathentry kind="lib" path="pbl3-master/jcalendar-1.4.jar"/>
 	<classpathentry kind="lib" path="pbl3-master/lib/mysql-connector-j-8.3.0.jar"/>
+	<classpathentry kind="lib" path="/Users/xuyenhuynh/Documents/PBL3/flatlaf-3.4.1.jar"/>
 	<classpathentry kind="output" path="pbl3-master/bin"/>
 </classpath>

@@ -33,7 +33,7 @@ public class XemTTPhieu extends JDialog {
 	private jT txtTieuDeSach;
 	private jT txtSoLuongSach;
 	private jT txtTinhtrang;
-	private jT txtIDphieu;
+	private jT txtIDphieu,txtNamXb,txtTacgia;
 	private jT txtPhiphat;
 	private jT txtIDSach;
 	private jT txtIDPhieu;
@@ -71,8 +71,9 @@ public class XemTTPhieu extends JDialog {
 		    initComponents();
 		    txtTieuDeSach.setText(sach.get_tensach());
 		    txtIDSach.setText(String.valueOf(sach.get_id_sach()));
-		    txtSoLuongSach.setText(String.valueOf(sach.get_soluong()));
-		    
+		    txtSoLuongSach.setText(String.valueOf(phieu.get_soluong()));
+		    txtNamXb.setText(String.valueOf(sach.get_namxb()));
+		    txtTacgia.setText(sach.get_tacgia());
 		    txtIDDocGia.setText(String.valueOf(docgia.get_id()));
 		    txtTenDocGia.setText(docgia.get_hoten());
 		    
@@ -102,12 +103,12 @@ public class XemTTPhieu extends JDialog {
 		
 		JPanel panelThongTin = new JPanel();
 		panelThongTin.setBackground(new Color(250, 250, 250));
-		panelThongTin.setBounds(24, 91, 746, 390);
+		panelThongTin.setBounds(24, 91, 746, 437);
 		contentPane.add(panelThongTin);
 		panelThongTin.setLayout(null);
 		
 		JPanel panelSach = new JPanel();
-		panelSach.setBounds(6, 6, 382, 378);
+		panelSach.setBounds(6, 6, 382, 425);
 		panelThongTin.add(panelSach);
 		panelSach.setLayout(null);
 		 
@@ -118,12 +119,6 @@ public class XemTTPhieu extends JDialog {
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		lblNewLabel_1.setBounds(85, 6, 230, 38);
 		panelSach.add(lblNewLabel_1);
-		
-		JLabel lblNewLabel_3 = new JLabel("Số lượng :");
-		lblNewLabel_3.setForeground(new Color(89, 185, 175));
-		lblNewLabel_3.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblNewLabel_3.setBounds(20, 147, 76, 38);
-		panelSach.add(lblNewLabel_3);
 		
 		JLabel lblNewLabel_6 = new JLabel("ID Độc giả :");
 		lblNewLabel_6.setForeground(new Color(89, 185, 175));
@@ -137,19 +132,9 @@ public class XemTTPhieu extends JDialog {
 		txtTieuDeSach.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		txtTieuDeSach.setBackground(new Color(250, 250, 250));
 		txtTieuDeSach.setBorder(new EmptyBorder(20, 3, 5, 30));
-		txtTieuDeSach.setBounds(129, 100, 230, 31);
+		txtTieuDeSach.setBounds(129, 100, 230, 43);
 		panelSach.add(txtTieuDeSach);
 		txtTieuDeSach.setColumns(10);
-		
-		txtSoLuongSach = new jT();
-		txtSoLuongSach.setEditable(false);
-		txtSoLuongSach.setForeground(new Color(110, 110, 110));
-		txtSoLuongSach.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		txtSoLuongSach.setBackground(new Color(250, 250, 250));
-		txtSoLuongSach.setBorder(new EmptyBorder(20, 3, 5, 30));
-		txtSoLuongSach.setBounds(129, 154, 230, 31);
-		panelSach.add(txtSoLuongSach);
-		txtSoLuongSach.setColumns(10);
 		
 		
 		JLabel lblNewLabel_5_1 = new JLabel("Tiêu đề sách :");
@@ -172,24 +157,24 @@ public class XemTTPhieu extends JDialog {
 		txtIDSach.setColumns(10);
 		txtIDSach.setBorder(new EmptyBorder(20, 3, 5, 30));
 		txtIDSach.setBackground(new Color(250, 250, 250));
-		txtIDSach.setBounds(129, 45, 230, 31);
+		txtIDSach.setBounds(129, 45, 230, 43);
 		panelSach.add(txtIDSach);
 		
 		JLabel lblNewLabel_1_1 = new JLabel("Thông tin Độc giả");
-		lblNewLabel_1_1.setBounds(55, 207, 230, 38);
+		lblNewLabel_1_1.setBounds(61, 266, 230, 38);
 		panelSach.add(lblNewLabel_1_1);
 		lblNewLabel_1_1.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_1_1.setForeground(new Color(89, 185, 175));
 		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		
 		JLabel lblNewLabel_6_1 = new JLabel("ID Độc giả :");
-		lblNewLabel_6_1.setBounds(30, 257, 98, 37);
+		lblNewLabel_6_1.setBounds(33, 316, 98, 37);
 		panelSach.add(lblNewLabel_6_1);
 		lblNewLabel_6_1.setForeground(new Color(89, 185, 175));
 		lblNewLabel_6_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
 		txtIDDocGia = new jT();
-		txtIDDocGia.setBounds(137, 257, 230, 31);
+		txtIDDocGia.setBounds(129, 305, 230, 43);
 		panelSach.add(txtIDDocGia);
 		txtIDDocGia.setText((String) null);
 		txtIDDocGia.setForeground(new Color(110, 110, 110));
@@ -200,7 +185,7 @@ public class XemTTPhieu extends JDialog {
 		txtIDDocGia.setBackground(new Color(250, 250, 250));
 		
 		txtTenDocGia = new jT();
-		txtTenDocGia.setBounds(137, 300, 230, 31);
+		txtTenDocGia.setBounds(129, 353, 238, 43);
 		panelSach.add(txtTenDocGia);
 		txtTenDocGia.setText((String) null);
 		txtTenDocGia.setForeground(new Color(110, 110, 110));
@@ -211,10 +196,44 @@ public class XemTTPhieu extends JDialog {
 		txtTenDocGia.setBackground(new Color(250, 250, 250));
 		
 		JLabel lblNewLabel_6_1_1 = new JLabel("Tên Đọc giả :");
-		lblNewLabel_6_1_1.setBounds(30, 298, 98, 37);
+		lblNewLabel_6_1_1.setBounds(33, 364, 95, 37);
 		panelSach.add(lblNewLabel_6_1_1);
 		lblNewLabel_6_1_1.setForeground(new Color(89, 185, 175));
 		lblNewLabel_6_1_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		
+		txtTacgia = new jT();
+		txtTacgia.setText((String) null);
+		txtTacgia.setForeground(new Color(110, 110, 110));
+		txtTacgia.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		txtTacgia.setEditable(false);
+		txtTacgia.setColumns(10);
+		txtTacgia.setBorder(new EmptyBorder(20, 3, 5, 30));
+		txtTacgia.setBackground(new Color(250, 250, 250));
+		txtTacgia.setBounds(129, 155, 230, 43);
+		panelSach.add(txtTacgia);
+		
+		JLabel lblNewLabel_5_1_2 = new JLabel("Tác giả:");
+		lblNewLabel_5_1_2.setForeground(new Color(89, 185, 175));
+		lblNewLabel_5_1_2.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblNewLabel_5_1_2.setBounds(20, 155, 111, 25);
+		panelSach.add(lblNewLabel_5_1_2);
+		
+		JLabel lblNewLabel_5_1_2_1 = new JLabel("Năm Xuất Bản:");
+		lblNewLabel_5_1_2_1.setForeground(new Color(89, 185, 175));
+		lblNewLabel_5_1_2_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblNewLabel_5_1_2_1.setBounds(20, 215, 111, 25);
+		panelSach.add(lblNewLabel_5_1_2_1);
+		
+		txtNamXb = new jT();
+		txtNamXb.setText((String) null);
+		txtNamXb.setForeground(new Color(110, 110, 110));
+		txtNamXb.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		txtNamXb.setEditable(false);
+		txtNamXb.setColumns(10);
+		txtNamXb.setBorder(new EmptyBorder(20, 3, 5, 30));
+		txtNamXb.setBackground(new Color(250, 250, 250));
+		txtNamXb.setBounds(129, 211, 230, 43);
+		panelSach.add(txtNamXb);
 		
 		txtIDPhieu = new jT();
 		txtIDPhieu.setEditable(false);
@@ -228,7 +247,7 @@ public class XemTTPhieu extends JDialog {
 		panelThongTin.add(txtIDPhieu);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(391, 6, 349, 378);
+		panel.setBounds(391, 6, 349, 425);
 		panelThongTin.add(panel);
 		panel.setLayout(null);
 		
@@ -242,31 +261,31 @@ public class XemTTPhieu extends JDialog {
 		JLabel lblNewLabel_6_1_2 = new JLabel("Ngày Mượn :");
 		lblNewLabel_6_1_2.setForeground(new Color(89, 185, 175));
 		lblNewLabel_6_1_2.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblNewLabel_6_1_2.setBounds(6, 83, 98, 37);
+		lblNewLabel_6_1_2.setBounds(16, 270, 98, 37);
 		panel.add(lblNewLabel_6_1_2);
 		
 		JLabel lblNewLabel_6_1_2_1 = new JLabel("Ngày Trả :");
 		lblNewLabel_6_1_2_1.setForeground(new Color(89, 185, 175));
 		lblNewLabel_6_1_2_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblNewLabel_6_1_2_1.setBounds(6, 132, 123, 37);
+		lblNewLabel_6_1_2_1.setBounds(16, 319, 123, 37);
 		panel.add(lblNewLabel_6_1_2_1);
 		
 		dateChooserMuon = new JDateChooser();
 		dateChooserMuon.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		dateChooserMuon.setDateFormatString("dd-MM-yyyy");
-		dateChooserMuon.setBounds(116, 83, 211, 27);
+		dateChooserMuon.setBounds(126, 270, 211, 27);
 		panel.add(dateChooserMuon);
 		
 	    dateChooserTra = new JDateChooser();
 		dateChooserTra.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		dateChooserTra.setDateFormatString("dd-MM-yyyy");
-		dateChooserTra.setBounds(116, 132, 211, 27);
+		dateChooserTra.setBounds(126, 319, 211, 27);
 		panel.add(dateChooserTra);
 		
 		JLabel lblNewLabel_6_1_2_1_1 = new JLabel("Phí Phạt : ");
 		lblNewLabel_6_1_2_1_1.setForeground(new Color(89, 185, 175));
 		lblNewLabel_6_1_2_1_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblNewLabel_6_1_2_1_1.setBounds(6, 182, 123, 37);
+		lblNewLabel_6_1_2_1_1.setBounds(6, 216, 123, 37);
 		panel.add(lblNewLabel_6_1_2_1_1);
 		
 		txtPhiphat = new jT();
@@ -277,7 +296,7 @@ public class XemTTPhieu extends JDialog {
 		txtPhiphat.setColumns(10);
 		txtPhiphat.setBorder(new EmptyBorder(20, 3, 5, 30));
 		txtPhiphat.setBackground(new Color(250, 250, 250));
-		txtPhiphat.setBounds(116, 181, 230, 31);
+		txtPhiphat.setBounds(116, 215, 230, 43);
 		panel.add(txtPhiphat);
 		
 		JLabel lblNewLabel_5 = new JLabel("ID Phiếu :");
@@ -294,13 +313,13 @@ public class XemTTPhieu extends JDialog {
 		txtIDphieu.setColumns(10);
 		txtIDphieu.setBorder(new EmptyBorder(20, 3, 5, 30));
 		txtIDphieu.setBackground(new Color(250, 250, 250));
-		txtIDphieu.setBounds(116, 40, 230, 31);
+		txtIDphieu.setBounds(116, 40, 230, 43);
 		panel.add(txtIDphieu);
 		
 		JLabel lblNewLabel_6_1_2_1_1_1 = new JLabel("Tình Trạng :");
 		lblNewLabel_6_1_2_1_1_1.setForeground(new Color(89, 185, 175));
 		lblNewLabel_6_1_2_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblNewLabel_6_1_2_1_1_1.setBounds(6, 231, 123, 37);
+		lblNewLabel_6_1_2_1_1_1.setBounds(6, 156, 123, 37);
 		panel.add(lblNewLabel_6_1_2_1_1_1);
 		
 		txtTinhtrang = new jT();
@@ -311,8 +330,24 @@ public class XemTTPhieu extends JDialog {
 		txtTinhtrang.setColumns(10);
 		txtTinhtrang.setBorder(new EmptyBorder(20, 3, 5, 30));
 		txtTinhtrang.setBackground(new Color(250, 250, 250));
-		txtTinhtrang.setBounds(116, 231, 230, 31);
+		txtTinhtrang.setBounds(116, 150, 230, 43);
 		panel.add(txtTinhtrang);
+		
+		txtSoLuongSach = new jT();
+		txtSoLuongSach.setBounds(116, 95, 230, 43);
+		panel.add(txtSoLuongSach);
+		txtSoLuongSach.setEditable(false);
+		txtSoLuongSach.setForeground(new Color(110, 110, 110));
+		txtSoLuongSach.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		txtSoLuongSach.setBackground(new Color(250, 250, 250));
+		txtSoLuongSach.setBorder(new EmptyBorder(20, 3, 5, 30));
+		txtSoLuongSach.setColumns(10);
+		
+		JLabel lblNewLabel_3 = new JLabel("Số lượng :");
+		lblNewLabel_3.setBounds(6, 95, 97, 38);
+		panel.add(lblNewLabel_3);
+		lblNewLabel_3.setForeground(new Color(89, 185, 175));
+		lblNewLabel_3.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
 		 JButton btnNewButton = new JButton("Thoát");
 		    btnNewButton.addActionListener(new ActionListener() {
@@ -320,7 +355,7 @@ public class XemTTPhieu extends JDialog {
 		    		dispose();
 		    	}
 		    });
-		    btnNewButton.setBounds(599, 489, 137, 40);
+		    btnNewButton.setBounds(616, 540, 137, 40);
 		    contentPane.add(btnNewButton);
 		JButton btnBack = new JButton("");
 	    btnBack.addActionListener(new ActionListener() {

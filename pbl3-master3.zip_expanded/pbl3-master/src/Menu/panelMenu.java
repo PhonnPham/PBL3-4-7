@@ -23,6 +23,12 @@ public class panelMenu extends JPanel {
 	public panelQlySach pnQlySach = new panelQlySach(parentFrame);
 	public panelQlymuon qlymuon = new panelQlymuon(parentFrame);
 	public panelQlydocgia qlydocgia = new panelQlydocgia(parentFrame);
+	public panelHomeDN panelHomeDN = new panelHomeDN(parentFrame);
+	public panelQlyhoadon qlyhoadon ;
+	public boolean check = false;
+	public panelMenu menu = this;
+	private JLabel lblngNhp;
+	private JLabel lbl6;
 	/**
 	 * Create the panel.
 	 */
@@ -39,7 +45,7 @@ public class panelMenu extends JPanel {
 		setLayout(null);
 		setBackground(new Color(63, 133, 124));
 		//add(panelMenu);
-		setBounds(0, 0, 245, 575);
+		setBounds(0, 0, 275, 725);
 		JLabel lbl1 = new JLabel("Quản lý thư viện");	
 		lbl1.setForeground(new Color(255, 255, 255));
 		
@@ -48,17 +54,17 @@ public class panelMenu extends JPanel {
 		lbl1.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl1.setVerticalTextPosition(SwingConstants.BOTTOM); // Hiển thị văn bản phía dưới icon
 		lbl1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lbl1.setBounds(33, 23, 148, 124);
+		lbl1.setBounds(38, 49, 148, 124);
 		this.add(lbl1);
 		//Quan lý mượn 
 		JLabel lbl4 = new JLabel("Quản lý mượn-trả sách");
 		lbl4.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-			  
+			  if(check) {
 				qlymuon.setVisible(true);
 			  parentFrame.AddPanel(qlymuon);
-			}
+			}}
 		});
 		lbl4.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lbl4.setForeground(new Color(255, 255, 255));
@@ -70,8 +76,10 @@ public class panelMenu extends JPanel {
 		lbl2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-			updatehome(true);
-			}
+				if(check) {
+				panelHomeDN.setVisible(true);
+				parentFrame.AddPanel(panelHomeDN);
+			}}
 		});
 		lbl2.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lbl2.setIcon(new ImageIcon("C:\\Users\\hoang\\OneDrive\\Documents\\Pictures\\Ảnh cho pbl3\\home.png"));
@@ -87,9 +95,10 @@ public class panelMenu extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				//updatehome(false);
 				//panelQlySach pnQlySach = new panelQlySach(parentFrame);
+				if(check) {
 				pnQlySach.setVisible(true);
 				parentFrame.AddPanel(pnQlySach);
-			}
+			}}
 		});
 		lbl3.setForeground(new Color(255, 255, 255));
 		lbl3.setIcon(new ImageIcon("C:\\Users\\hoang\\OneDrive\\Documents\\Pictures\\Ảnh cho pbl3\\book stack.png"));
@@ -104,9 +113,10 @@ public class panelMenu extends JPanel {
 				
 			//	ql_nguoi_muon qlynguoimuon = new ql_nguoi_muon();
 			//	qlynguoimuon.setVisible(true);
+				if(check) {
 				qlydocgia.setVisible(true);
 				parentFrame.AddPanel(qlydocgia);
-			}
+			}}
 		});
 		lbl5.setIcon(new ImageIcon("C:\\Users\\hoang\\OneDrive\\Documents\\Pictures\\Ảnh cho pbl3\\people manage.png"));
 		lbl5.setForeground(new Color(255, 255, 255));
@@ -114,21 +124,50 @@ public class panelMenu extends JPanel {
 		lbl5.setBounds(10, 420, 227, 55);
 		this.add(lbl5);
 		
-		JLabel lbl6 = new JLabel("Đăng  xuất");
+		lbl6 = new JLabel("Đăng  xuất");
 		lbl6.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-								
-				DNhap DN = new DNhap(parentFrame);
-				DN.setVisible(true);	
+				lbl6.setVisible(false);
+				lblngNhp.setVisible(true);	
+				//DNhap DN = new DNhap(parentFrame, menu);
+				//DN.setVisible(true);	
 			}
 	});
 	lbl6.setIcon(new ImageIcon("C:\\Users\\hoang\\OneDrive\\Documents\\Pictures\\Ảnh cho pbl3\\log out.png"));
 	lbl6.setFont(new Font("Tahoma", Font.PLAIN, 16));
 	lbl6.setForeground(new Color(255, 255, 255));
-	lbl6.setBounds(10, 507, 207, 55);
+	lbl6.setBounds(10, 567, 207, 55);
+	lbl6.setVisible(false);
 	this.add(lbl6);
+	
+	JLabel lblQunLHo = new JLabel("Quản lý Hoá đơn");
+	lblQunLHo.addMouseListener(new MouseAdapter() {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			qlyhoadon = new panelQlyhoadon(parentFrame, parentFrame.Flag);
+			parentFrame.AddPanel(qlyhoadon);
+			qlyhoadon.setVisible(true);
+		}
+	});
+	lblQunLHo.setForeground(Color.WHITE);
+	lblQunLHo.setFont(new Font("Tahoma", Font.PLAIN, 16));
+	lblQunLHo.setBounds(10, 489, 227, 55);
+	add(lblQunLHo);
+	
+	lblngNhp = new JLabel("Đăng  Nhập");
+	lblngNhp.addMouseListener(new MouseAdapter() {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			DNhap DN = new DNhap(parentFrame, menu);
+			DN.setVisible(true);
+			lbl6.setVisible(true);
+			lblngNhp.setVisible(false);
+		}
+	});
+	lblngNhp.setForeground(Color.WHITE);
+	lblngNhp.setFont(new Font("Tahoma", Font.PLAIN, 16));
+	lblngNhp.setBounds(10, 567, 207, 55);
+	add(lblngNhp);
 }
-
-
 }

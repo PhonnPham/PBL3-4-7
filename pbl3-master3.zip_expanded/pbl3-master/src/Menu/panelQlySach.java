@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -42,6 +43,9 @@ public class panelQlySach extends JPanel {
 	private TableActionEvent event;
 	private home parentFrame;
 	private panelQlySach pn = this;
+	private JComboBox cBTacgia;
+	private JComboBox cBTheloai;
+	private JComboBox cBnxb;
 	/**
 	 * Create the panel.
 	 */
@@ -53,11 +57,11 @@ public class panelQlySach extends JPanel {
 		listSach = new ArrayList<>();
 		tableModel = (DefaultTableModel) table.getModel();
 		SachDao.getInstance().selectAll(listSach);
-		showListBook();
+		showListBook(listSach);
+		populateComboBoxes();
 		
 	}
-
-	private void showListBook() {
+	void tableevent() {
 		event = new TableActionEvent() {
 			
 			@Override
@@ -93,30 +97,33 @@ public class panelQlySach extends JPanel {
 
 		                tableModel.fireTableDataChanged(); // Cập nhật hiển thị của bảng
 		                JOptionPane.showMessageDialog(contentPane, "Xóa thành công");
-		                showListBook();
+		                showListBook(listSach);
 		            }
 			}
 		};
-        tableModel.setRowCount(0);
-        //int stt = 1;
-        for (Sach e : listSach) {
-            Object[] row = new Object[]{ e.get_id_sach(),
-                e.get_tensach(), e.get_namxb()
-                };
-            tableModel.addRow(row);
-            tableModel.fireTableDataChanged();
-            table.setRowHeight(45);
-	        table.setModel(tableModel);
-	        table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellRenderer(new TableActionCellRender());
-	        table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellEditor(new TableActionCellEditor(event));
-            
-	        table.getColumnModel().getColumn(0).setPreferredWidth(15);
-	        table.getColumnModel().getColumn(1).setPreferredWidth(80);
-	        table.getColumnModel().getColumn(0).setPreferredWidth(15);
-	        table.getColumnModel().getColumn(0).setPreferredWidth(15);
-        }
-
-    }
+	}
+//	private void showListBook() {
+//		tableevent();
+//        tableModel.setRowCount(0);
+//        //int stt = 1;
+//        for (Sach e : listSach) {
+//            Object[] row = new Object[]{ e.get_id_sach(),
+//                e.get_tensach(),e.get_id_tacgia(),e.get_theloai(),e.get_soluong(), e.get_namxb()
+//                };
+//            tableModel.addRow(row);
+//            tableModel.fireTableDataChanged();
+//            table.setRowHeight(45);
+//	        table.setModel(tableModel);
+//	        table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellRenderer(new TableActionCellRender());
+//	        table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellEditor(new TableActionCellEditor(event));
+//            
+//	        table.getColumnModel().getColumn(0).setPreferredWidth(15);
+//	        table.getColumnModel().getColumn(1).setPreferredWidth(80);
+//	        table.getColumnModel().getColumn(0).setPreferredWidth(15);
+//	        table.getColumnModel().getColumn(0).setPreferredWidth(15);
+//        }
+//
+//    }
 	
 	 public void editBook(Sach b) {
 	        listSach.set(edit, b);
@@ -128,110 +135,29 @@ public class panelQlySach extends JPanel {
 	        tableModel.insertRow(edit, row);
 	        tableModel.fireTableDataChanged();
 	    }
-	 private void showSeachBook(Sach b) {
-		    TableActionEvent event2 = new TableActionEvent() {
-		        @Override
-		        public void onView(int row) {
-		            if(row >= 0 && row < listSach.size()) {
-		                Sach selectedBook = b;
-		                XemTTSach xem =  new XemTTSach(parentFrame,true,selectedBook,pn);
-		            
-		                xem.setVisible(true);
-		            }
-		        }
-
-		        @Override
-		        public void onEdit(int row) {
-		            edit = row;
-		            if(row >= 0 && row < listSach.size()) {
-		                Sach selectedBook = b;
-		            	CapNhapTTSach up =  new CapNhapTTSach(parentFrame,true,selectedBook, pn);
-		           
-		                up.setVisible(true);
-		            }
-		        }
-
-		        @Override
-		        public void onDelete(int row) {
-		            int result = JOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa không?", "Thông Báo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-		            if (result == JOptionPane.YES_OPTION) {
-		                SachDao.getInstance().Delete(b);
-		                listSach.remove(b);
-		                tableModel.setRowCount(0); // Xóa dữ liệu từ mô hình hiện tại
-
-		                
-
-		                tableModel.fireTableDataChanged(); // Cập nhật hiển thị của bảng
-		                JOptionPane.showMessageDialog(contentPane, "Xóa thành công");
-		                showListBook();
-		            }
-		        }
-		    };
+	 private void showSeachBook(Sach e) {
+		    tableevent();
 
 		    tableModel.setRowCount(0);
-		    Object[] row = new Object[]{ b.get_id_sach(), b.get_tensach(), b.get_namxb() };
+		    Object[] row = new Object[]{ e.get_id_sach(),
+	                e.get_tensach(),e.get_tacgia(),e.get_theloai(),e.get_soluong(), e.get_namxb()
+	                };
 		    tableModel.addRow(row);
 		    tableModel.fireTableDataChanged();
 		    table.setRowHeight(45);
 		    table.setModel(tableModel);
 		    table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellRenderer(new TableActionCellRender());
-		    table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellEditor(new TableActionCellEditor(event2));
+		    table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellEditor(new TableActionCellEditor(event));
 		    table.getColumnModel().getColumn(0).setPreferredWidth(15);
 		    table.getColumnModel().getColumn(1).setPreferredWidth(80);
 		}
 
-	 private void showListAuthor(ArrayList<Sach> listSeach) {
-			TableActionEvent event3 = new TableActionEvent() {
-				
-				@Override
-				public void onView(int row) {
-					if(row >= 0 && row < listSeach.size())
-					{
-						Sach selectedBook = listSeach.get(row);
-						XemTTSach xem =  new XemTTSach(parentFrame,true,selectedBook,pn);
-						xem.setVisible(true);
-					}
-					
-				}
-				
-				@Override
-				public void onEdit(int row) {
-					edit = row;
-					if (row >= 0 && row < listSeach.size()) {
-						Sach selectedBook = listSeach.get(row);
-						CapNhapTTSach up =  new CapNhapTTSach(parentFrame,true,selectedBook, pn);
-
-					
-						up.setVisible(true);
-					}
-					
-				}
-				
-				@Override
-				public void onDelete(int row) {
-					int result = JOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa không?", "Thông Báo",
-							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-					if (result == JOptionPane.YES_OPTION) {
-						SachDao.getInstance().Delete(listSeach.get(row));
-						listSeach.remove(row);
-
-		                tableModel.fireTableDataChanged(); 
-		                tableModel.setRowCount(0);
-		                listSach.clear();
-		                SachDao.getInstance().selectAll(listSach);
-		                showListBook();
-		                
-		                
-		                tableModel.fireTableDataChanged(); 
-		                JOptionPane.showMessageDialog(contentPane, "Xóa thành công");
-					}
-					
-				}
-			};
+	 private void showListBook(ArrayList<Sach> listSach) {
+			tableevent();
 			tableModel.setRowCount(0);
-			for (Sach e : listSeach) {
-				Object[] row = new Object[] { e.get_id_sach(), e.get_tensach(), e.get_namxb()
-
+			for (Sach e : listSach) {
+				Object[] row = new Object[]{ e.get_id_sach(),
+		                e.get_tensach(),e.get_tacgia(),e.get_theloai(),e.get_soluong(), e.get_namxb()
 				};
 				tableModel.addRow(row);
 				tableModel.fireTableDataChanged();
@@ -241,7 +167,7 @@ public class panelQlySach extends JPanel {
 						.setCellRenderer(new TableActionCellRender());
 				
 				table.getColumnModel().getColumn(tableModel.getColumnCount() - 1)
-						.setCellEditor(new TableActionCellEditor(event3));
+						.setCellEditor(new TableActionCellEditor(event));
 
 				table.getColumnModel().getColumn(0).setPreferredWidth(15);
 				table.getColumnModel().getColumn(1).setPreferredWidth(80);
@@ -249,16 +175,38 @@ public class panelQlySach extends JPanel {
 			}
 
 		}
+	 //ham them thong tin comboBox
+	 private void populateComboBoxes() {
+			ArrayList<String> authors = listSach.stream().map(Sach::get_tacgia).distinct().collect(Collectors.toCollection(ArrayList::new));
+			ArrayList<String> genres = listSach.stream().map(Sach::get_theloai).distinct().collect(Collectors.toCollection(ArrayList::new));
+			ArrayList<String> publishers = listSach.stream().map(Sach::get_namxb).distinct().collect(Collectors.toCollection(ArrayList::new));
+			authors.add(0, "All");
+		    genres.add(0, "All");
+		    publishers.add(0, "All");
+			cBTacgia.setModel(new DefaultComboBoxModel<>(authors.toArray(new String[0])));
+			cBTheloai.setModel(new DefaultComboBoxModel<>(genres.toArray(new String[0])));
+			cBnxb.setModel(new DefaultComboBoxModel<>(publishers.toArray(new String[0])));
+		}
+	 //ham loc du lieu
+	 private void filterTable(String tacgia, String theloai, String nxb) {
+			ArrayList<Sach> filteredList = (ArrayList<Sach>) listSach.stream()
+					.filter(s -> (tacgia.equals("All") || tacgia.isEmpty() || s.get_tacgia().equals(tacgia)))
+					.filter(s -> (theloai.equals("All")  || theloai.isEmpty() || s.get_theloai().equals(theloai)))
+					.filter(s -> (nxb.equals("All")  || nxb.isEmpty() || s.get_namxb().equals(nxb)))
+					.collect(Collectors.toList());
+
+			showListBook(filteredList);
+		}
 	public void initComponents(){
 		 new JPanel();
 		this.setBackground(new Color(129, 203, 196));
-		this.setBounds(238, 0, 580, 575);
+		this.setBounds(275, 0, 825, 725);
 		this.setLayout(null);
 		
 		JLabel lblNewLabel_6 = new JLabel("Quản lý kho sách");
 		lblNewLabel_6.setForeground(new Color(255, 255, 255));
 		lblNewLabel_6.setBackground(new Color(255, 255, 255));
-		lblNewLabel_6.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		lblNewLabel_6.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		lblNewLabel_6.setBounds(27, 35, 249, 61);
 		this.add(lblNewLabel_6);
 		
@@ -299,17 +247,17 @@ public class panelQlySach extends JPanel {
 		this.add(lblSearch);
 		
 		JScrollPane scrollPaneTable = new JScrollPane();
-		scrollPaneTable.setBounds(27, 184, 543, 291);
+		scrollPaneTable.setBounds(27, 184, 725, 291);
 		this.add(scrollPaneTable);
 		
 		table = new JTable();
 		table.setFont(new java.awt.Font("Times New Roman", 0, 14));
 		table.setModel(new DefaultTableModel(
 	            new Object [][] {},
-	            new String [] {"ID Sách",  "Tên Sách", "Năm xuất bản","Hành động"}
+	            new String [] {"ID Sách","Tên Sách","Tác giả","Thể loại","Nhà xuất bản", "Năm xuất bản","Hành động"}
 	        ) 	{
 	            boolean[] canEdit = new boolean [] {
-	                false, false, false,true
+	                false, false, false,false,false,false,true
 	            };
 
 	            public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -317,8 +265,8 @@ public class panelQlySach extends JPanel {
 	            }
 	        });
 		scrollPaneTable.setViewportView(table);
-		JButton btnNewButton = new JButton("Search");
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton btnsearch = new JButton("Tìm kiếm");
+		btnsearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String t = txtNhap.getText();
 				try {
@@ -337,7 +285,7 @@ public class panelQlySach extends JPanel {
 						if (comboBox.getSelectedItem().equals("Tên tác giả")) {
 							ArrayList<Sach> listauthor = SachDao.getInstance().searchByAuthor(listSach, t);
 							if (listauthor.size() > 0)
-								showListAuthor(listauthor);
+								showListBook(listauthor);
 							else
 								JOptionPane.showMessageDialog(contentPane, "Không tìm thấy tên tác giả", "Thông Báo",
 										JOptionPane.ERROR_MESSAGE);
@@ -346,7 +294,7 @@ public class panelQlySach extends JPanel {
 						if (comboBox.getSelectedItem().equals("Tên sách")) {
 							ArrayList<Sach> listtitle = SachDao.getInstance().searchByTitle(listSach, t);
 							if (listtitle.size() > 0)
-								showListAuthor(listtitle);
+								showListBook(listtitle);
 							else
 								JOptionPane.showMessageDialog(contentPane, "Không tìm thấy tên sách", "Thông Báo",
 										JOptionPane.ERROR_MESSAGE);
@@ -364,21 +312,24 @@ public class panelQlySach extends JPanel {
 
 			}
 		});
-		btnNewButton.setIcon(new ImageIcon("C:\\Users\\hoang\\OneDrive\\Documents\\Pictures\\Ảnh cho pbl3\\Search.png"));
-		btnNewButton.setBackground(new Color(69, 167, 157));
-		btnNewButton.setBounds(482, 113, 66, 21);
-		this.add(btnNewButton);
+		btnsearch.setIcon(new ImageIcon("C:\\Users\\hoang\\OneDrive\\Documents\\Pictures\\Ảnh cho pbl3\\Search.png"));
+		btnsearch.setBackground(new Color(69, 167, 157));
+		btnsearch.setBounds(482, 113, 101, 21);
+		this.add(btnsearch);
 
 		JButton btnNewButton_1 = new JButton("Resest");
 		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btnNewButton_1.setForeground(Color.BLACK);
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				showListBook();
+				cBnxb.setSelectedIndex(0);
+				cBTacgia.setSelectedIndex(0);
+				cBTheloai.setSelectedIndex(0);
+				showListBook(listSach);
 			}
 		});
 		btnNewButton_1.setBackground(new Color(69, 167, 157));
-		btnNewButton_1.setBounds(327, 500, 81, 41);
+		btnNewButton_1.setBounds(451, 514, 81, 41);
 		this.add(btnNewButton_1);
 		
 		JButton btnThemSach = new JButton("Thêm sách mới");
@@ -393,8 +344,40 @@ public class panelQlySach extends JPanel {
 		btnThemSach.setForeground(Color.BLACK);
 		btnThemSach.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btnThemSach.setBackground(new Color(69, 167, 157));
-		btnThemSach.setBounds(438, 500, 132, 41);
+		btnThemSach.setBounds(606, 514, 132, 41);
 		this.add(btnThemSach);
+		
+		cBTacgia = new JComboBox();
+		cBTacgia.setBounds(100, 145, 132, 27);
+		add(cBTacgia);
+		
+		cBnxb = new JComboBox();
+		cBnxb.setBounds(421, 145, 132, 27);
+		add(cBnxb);
+		
+		cBTheloai = new JComboBox();
+		cBTheloai.setBounds(263, 145, 132, 27);
+		add(cBTheloai);
+		
+		JLabel lblNewLabel_7_1 = new JLabel("Lọc:");
+		lblNewLabel_7_1.setHorizontalAlignment(SwingConstants.LEFT);
+		lblNewLabel_7_1.setForeground(Color.WHITE);
+		lblNewLabel_7_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblNewLabel_7_1.setBounds(37, 143, 86, 38);
+		add(lblNewLabel_7_1);
+		
+		JButton btn = new JButton("Lọc");
+		btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String tacgia = (String) cBTacgia.getSelectedItem();
+				String theloai = (String) cBTheloai.getSelectedItem();
+				String nxb = (String) cBnxb.getSelectedItem();
+				filterTable(tacgia,theloai,nxb);
+			}
+		});
+		btn.setBackground(new Color(69, 167, 157));
+		btn.setBounds(575, 151, 66, 21);
+		add(btn);
 	}
 	}
 
