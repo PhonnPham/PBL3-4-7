@@ -213,7 +213,8 @@ public ghi_nhan_tra_sach(home frame,panelQlymuon qlm, int id) {
 		dateChooserNhT.setDate(phieu.get_ngaytra());
 		
 		//txtThuThu.setText(thuthuDAO.getInstance().selectByName("thanh").get_hoten());
-		txtThuThu.setText(home.tt.get_hoten());
+		//if()
+		txtThuThu.setText(Bientoancuc.tt.get_hoten());
 		
 	}
 
@@ -495,7 +496,7 @@ public ghi_nhan_tra_sach(home frame,panelQlymuon qlm, int id) {
 			
 			 if(tongphat > 0) {
 		    	  //Hoadon(int _id_hoadon,int _id_tt,int _id_phieu, Date _ngayttoan, int _tongtien)
-		    	  Hoadon h = new Hoadon(++idhd,home.tt.get_id(),phieu.get_id_phieu(),dateChooserNT_1.getDate(),tongphat);
+		    	  Hoadon h = new Hoadon(++idhd,Bientoancuc.tt.get_id(),phieu.get_id_phieu(),dateChooserNT_1.getDate(),tongphat);
 		    	  hoadonDAO.Insert(h);
 		      }
 			dispose();

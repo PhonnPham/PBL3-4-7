@@ -15,8 +15,8 @@ import javax.swing.SwingConstants;
 import QL_Muon_Sach_view.*;
 import gdDN.DNhap;
 import doc_gia.*;
-
-public class panelMenu extends JPanel {
+import Model.*;
+	public class panelMenu extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	public home parentFrame;
@@ -130,6 +130,7 @@ public class panelMenu extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				lbl6.setVisible(false);
 				lblngNhp.setVisible(true);	
+				Bientoancuc.tt = null;
 				//DNhap DN = new DNhap(parentFrame, menu);
 				//DN.setVisible(true);	
 			}
@@ -145,9 +146,11 @@ public class panelMenu extends JPanel {
 	lblQunLHo.addMouseListener(new MouseAdapter() {
 		@Override
 		public void mouseClicked(MouseEvent e) {
+			if(check) {
 			qlyhoadon = new panelQlyhoadon(parentFrame, parentFrame.Flag);
 			parentFrame.AddPanel(qlyhoadon);
 			qlyhoadon.setVisible(true);
+			}
 		}
 	});
 	lblQunLHo.setForeground(Color.WHITE);

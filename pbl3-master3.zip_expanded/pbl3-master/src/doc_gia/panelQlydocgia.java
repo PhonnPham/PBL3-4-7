@@ -229,7 +229,7 @@ public class panelQlydocgia extends JPanel {
 	textField.setColumns(10);
 	
 	JScrollPane scrollPane = new JScrollPane();
-	scrollPane.setBounds(21, 225, 768, 305);
+	scrollPane.setBounds(21, 225, 842, 305);
 	this.add(scrollPane);
 	
 	table = new JTable();

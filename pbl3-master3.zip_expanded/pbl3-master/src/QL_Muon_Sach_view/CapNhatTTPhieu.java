@@ -127,11 +127,12 @@ public class CapNhatTTPhieu extends JDialog {
 		panelSach.add(lblNewLabel_6);
 		
 		txtTieuDeSach = new jT();
+		txtTieuDeSach.setEditable(false);
 		txtTieuDeSach.setForeground(new Color(110, 110, 110));
 		txtTieuDeSach.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		txtTieuDeSach.setBackground(new Color(250, 250, 250));
 		txtTieuDeSach.setBorder(new EmptyBorder(20, 3, 5, 30));
-		txtTieuDeSach.setBounds(129, 100, 230, 31);
+		txtTieuDeSach.setBounds(129, 100, 230, 43);
 		panelSach.add(txtTieuDeSach);
 		txtTieuDeSach.setColumns(10);
 		
@@ -149,30 +150,31 @@ public class CapNhatTTPhieu extends JDialog {
 		panelSach.add(lblNewLabel_5_1_1);
 		
 		txtIDSach = new jT();
+		txtIDSach.setEditable(false);
 		txtIDSach.setText((String) null);
 		txtIDSach.setForeground(new Color(110, 110, 110));
 		txtIDSach.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		txtIDSach.setColumns(10);
 		txtIDSach.setBorder(new EmptyBorder(20, 3, 5, 30));
 		txtIDSach.setBackground(new Color(250, 250, 250));
-		txtIDSach.setBounds(129, 45, 230, 31);
+		txtIDSach.setBounds(129, 45, 230, 43);
 		panelSach.add(txtIDSach);
 		
 		JLabel lblNewLabel_1_1 = new JLabel("Thông tin Độc giả");
-		lblNewLabel_1_1.setBounds(55, 207, 230, 38);
+		lblNewLabel_1_1.setBounds(59, 190, 230, 38);
 		panelSach.add(lblNewLabel_1_1);
 		lblNewLabel_1_1.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_1_1.setForeground(new Color(89, 185, 175));
 		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		
 		JLabel lblNewLabel_6_1 = new JLabel("ID Độc giả :");
-		lblNewLabel_6_1.setBounds(30, 257, 98, 37);
+		lblNewLabel_6_1.setBounds(30, 240, 98, 37);
 		panelSach.add(lblNewLabel_6_1);
 		lblNewLabel_6_1.setForeground(new Color(89, 185, 175));
 		lblNewLabel_6_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
 		txtIDDocGia = new jT();
-		txtIDDocGia.setBounds(137, 257, 230, 31);
+		txtIDDocGia.setBounds(129, 240, 230, 43);
 		panelSach.add(txtIDDocGia);
 		txtIDDocGia.setText((String) null);
 		txtIDDocGia.setForeground(new Color(110, 110, 110));
@@ -183,7 +185,7 @@ public class CapNhatTTPhieu extends JDialog {
 		txtIDDocGia.setBackground(new Color(250, 250, 250));
 		
 		txtTenDocGia = new jT();
-		txtTenDocGia.setBounds(137, 300, 230, 31);
+		txtTenDocGia.setBounds(129, 295, 230, 43);
 		panelSach.add(txtTenDocGia);
 		txtTenDocGia.setText((String) null);
 		txtTenDocGia.setForeground(new Color(110, 110, 110));
@@ -225,25 +227,25 @@ public class CapNhatTTPhieu extends JDialog {
 		JLabel lblNewLabel_6_1_2 = new JLabel("Ngày Mượn :");
 		lblNewLabel_6_1_2.setForeground(new Color(89, 185, 175));
 		lblNewLabel_6_1_2.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblNewLabel_6_1_2.setBounds(6, 83, 98, 37);
+		lblNewLabel_6_1_2.setBounds(6, 90, 98, 37);
 		panel.add(lblNewLabel_6_1_2);
 		
 		JLabel lblNewLabel_6_1_2_1 = new JLabel("Ngày hẹn Trả :");
 		lblNewLabel_6_1_2_1.setForeground(new Color(89, 185, 175));
 		lblNewLabel_6_1_2_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblNewLabel_6_1_2_1.setBounds(6, 132, 123, 37);
+		lblNewLabel_6_1_2_1.setBounds(6, 139, 123, 37);
 		panel.add(lblNewLabel_6_1_2_1);
 		
 		dateChooserMuon = new JDateChooser();
 		dateChooserMuon.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		dateChooserMuon.setDateFormatString("dd-MM-yyyy");
-		dateChooserMuon.setBounds(116, 83, 211, 27);
+		dateChooserMuon.setBounds(116, 90, 211, 27);
 		panel.add(dateChooserMuon);
 		
 	    dateChooserTra = new JDateChooser();
 		dateChooserTra.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		dateChooserTra.setDateFormatString("dd-MM-yyyy");
-		dateChooserTra.setBounds(116, 132, 211, 27);
+		dateChooserTra.setBounds(116, 139, 211, 27);
 		panel.add(dateChooserTra);
 		
 		JLabel lblNewLabel_5 = new JLabel("ID Phiếu :");
@@ -253,13 +255,14 @@ public class CapNhatTTPhieu extends JDialog {
 		panel.add(lblNewLabel_5);
 		
 		txtIDphieu = new jT();
+		txtIDphieu.setEnabled(false);
 		txtIDphieu.setText((String) null);
 		txtIDphieu.setForeground(new Color(110, 110, 110));
 		txtIDphieu.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		txtIDphieu.setColumns(10);
 		txtIDphieu.setBorder(new EmptyBorder(20, 3, 5, 30));
 		txtIDphieu.setBackground(new Color(250, 250, 250));
-		txtIDphieu.setBounds(116, 40, 230, 31);
+		txtIDphieu.setBounds(116, 40, 230, 43);
 		panel.add(txtIDphieu);
 		
 		JLabel lblNewLabel_6_1_2_1_1_1 = new JLabel("Tình Trạng :");
@@ -272,11 +275,10 @@ public class CapNhatTTPhieu extends JDialog {
 		txtTinhtrang.setText((String) null);
 		txtTinhtrang.setForeground(new Color(110, 110, 110));
 		txtTinhtrang.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		txtTinhtrang.setEditable(false);
 		txtTinhtrang.setColumns(10);
 		txtTinhtrang.setBorder(new EmptyBorder(20, 3, 5, 30));
 		txtTinhtrang.setBackground(new Color(250, 250, 250));
-		txtTinhtrang.setBounds(116, 273, 230, 31);
+		txtTinhtrang.setBounds(116, 273, 230, 43);
 		panel.add(txtTinhtrang);
 		
 		JLabel lblNewLabel_3 = new JLabel("Số lượng :");
@@ -286,7 +288,7 @@ public class CapNhatTTPhieu extends JDialog {
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
 		txtSoLuongSach = new jT();
-		txtSoLuongSach.setBounds(116, 188, 230, 31);
+		txtSoLuongSach.setBounds(116, 188, 230, 43);
 		panel.add(txtSoLuongSach);
 		txtSoLuongSach.setEditable(true);
 		txtSoLuongSach.setForeground(new Color(110, 110, 110));

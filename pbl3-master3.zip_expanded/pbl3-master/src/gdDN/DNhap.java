@@ -151,14 +151,14 @@ public class DNhap extends JFrame {
                     DN.setVisible(false);
                     setCheck(true);
                     menu.check = isCheck();
-                    parentpn.tt=ttDAO.getInstance().selectByName(username);
+                    Bientoancuc.tt=ttDAO.getInstance().selectByName(username);
                     parentpn.Flag = false;
                     parentpn.setVisible(true);
                 } else if(authenticate2(username, password)) {
                 	JOptionPane.showMessageDialog(contentPane, "Đăng Nhập thành công với vai trò ADMIN", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
                     DN.setVisible(false);
                     setCheck(true);
-                    //parentpn.tt=ttDAO.getInstance().selectByName(username);
+                    Bientoancuc.tt=ttDAO.getInstance().selectByName(username);
                     parentpn.Flag = true;
                     parentpn.setVisible(true);
                     }
