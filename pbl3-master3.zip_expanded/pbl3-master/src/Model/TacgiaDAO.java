@@ -38,7 +38,7 @@ public class TacgiaDAO implements DAOInterface<Tacgia> {
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, t.get_id());
             ps.setString(2, t.get_hoten());
-            ps.setDate(3, (Date) t.get_ns());
+            ps.setDate(3, new java.sql.Date(t.get_ns().getTime()));
             ps.setString(4, t.get_theloai());
             int result = ps.executeUpdate();
 
@@ -56,7 +56,7 @@ public class TacgiaDAO implements DAOInterface<Tacgia> {
                     + " Ns_tacgia = ?, Theloai = ? WHERE Id_tacgia= ?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, t.get_hoten());
-            ps.setDate(2, (Date) t.get_ns());
+            ps.setDate(2, new java.sql.Date(t.get_ns().getTime()));
             ps.setString(3, t.get_theloai());
             int result = ps.executeUpdate();
 
@@ -89,6 +89,25 @@ public class TacgiaDAO implements DAOInterface<Tacgia> {
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/pbl3", "root", "");
              PreparedStatement preparedStatement = conn.prepareStatement(query)) {
             preparedStatement.setInt(1, t.get_id());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+            	int id = resultSet.getInt(1);
+                String name = resultSet.getString(2);
+                Date ns = resultSet.getDate(3);
+                String theloai = resultSet.getString(4);
+                result = new Tacgia(id, name, ns, theloai);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return result;
+	}
+	public Tacgia selectByName(String t) {
+		Tacgia result = null;
+        String query = "SELECT * FROM tacgia WHERE Name_tacgia = ?";
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/pbl3", "root", "");
+             PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setString(1, t);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
             	int id = resultSet.getInt(1);
@@ -144,5 +163,6 @@ public class TacgiaDAO implements DAOInterface<Tacgia> {
             ex.printStackTrace();
         }
 	}
+	
 
 }

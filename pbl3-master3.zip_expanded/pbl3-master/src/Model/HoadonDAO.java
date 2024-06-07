@@ -151,5 +151,62 @@ public class HoadonDAO implements DAOInterface<Hoadon> {
             ex.printStackTrace();
         }
 	}
+	public ArrayList<Hoadon> searchHD(ArrayList<Hoadon> listHD, String t, int dk)
+	{
+		ArrayList<Hoadon> listSearchHD =  new ArrayList<>();
+		if(listHD.size() > 0)
+		{
+			for(Hoadon e : listHD)
+			{	
+				if(dk == 0 && String.valueOf(e.get_id_phieu()).toLowerCase().contains(t.toLowerCase()))
+				{
+					listSearchHD.add(e);
+				}
+				if(dk == 1 && String.valueOf(e.get_id_hoadon()).toLowerCase().contains(t.toLowerCase()))
+				{
+					listSearchHD.add(e);
+				}
+				if(dk == 2 && String.valueOf(e.get_id_tt()).toLowerCase().contains(t.toLowerCase()))
+				{
+					listSearchHD.add(e);
+				}
+			}
+		}
+		return listSearchHD;
+	}
+	public int getTotalUniqueHD() {
+	    int t = 0;
+	    DataSource data = ketNoiSQL();
+	    String query = "SELECT COUNT(DISTINCT Id_hoadon) FROM hoadon";
 
-}
+	    try (Connection conn = data.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(query);
+	         ResultSet resultSet = ps.executeQuery()) {
+	         
+	        if (resultSet.next()) {
+	            t = resultSet.getInt(1);
+	        }
+	    } catch (SQLException ex) {
+	        ex.printStackTrace();
+	    }
+	    return t;
+	}
+	 public int getTotalPhi() {
+		    int t = 0;
+		    DataSource data = ketNoiSQL();
+		    String query = "SELECT SUM(Total) FROM hoadon";
+
+		    try (Connection conn = data.getConnection();
+		         PreparedStatement ps = conn.prepareStatement(query);
+		         ResultSet resultSet = ps.executeQuery()) {
+		         
+		        if (resultSet.next()) {
+		            t = resultSet.getInt(1);
+		        }
+		    } catch (SQLException ex) {
+		        ex.printStackTrace();
+		    }
+
+		    return t;
+		}
+}	

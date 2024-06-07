@@ -1,12 +1,6 @@
 package doc_gia;
 
-import java.awt.Checkbox;
-import java.awt.CheckboxGroup;
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -15,25 +9,17 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JTextField;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.*;
 
+import Menu.CapNhapTTSach;
+import Menu.XemTTSach;
 import Menu.home;
 import Model.*;
 import raven.cell.TableActionCellEditor;
 import raven.cell.TableActionCellRender;
 import raven.cell.TableActionEvent;
-import javax.swing.JButton;
-import javax.swing.JDialog;
+
+import javax.swing.table.DefaultTableModel;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -44,35 +30,19 @@ public class panelQlydocgia extends JPanel {
 	private JPanel contentPane;
 	private JTextField textField;
 	private JTable table;
-	private CheckboxGroup cg;
+	
 	private home parentFrame;
 	private int edit = -1;
 	private ArrayList<Docgia> listDocgia;
 	private DocgiaDAO DocgiaDao;
 	private DefaultTableModel tableModel;
 	private TableActionEvent event;
+	private panelQlydocgia qld = this ;
+	private JComboBox comboBox;
 	
 	
 	//private qlthemdocgia qlthem;
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					ql_nguoi_muon frame = new ql_nguoi_muon();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
-	/**
-	 * Create the frame.
-	 */
 	public panelQlydocgia(home parentFrame) {
 		this.parentFrame = parentFrame;
 		initComponents();
@@ -81,69 +51,57 @@ public class panelQlydocgia extends JPanel {
 		listDocgia = new ArrayList<>();
 		tableModel = (DefaultTableModel) table.getModel();
 		DocgiaDao.getInstance().selectAll(listDocgia);
-		showListDocgia();
+		showListDocgia(listDocgia);
 	}
-	
-	private void showListDocgia() {
+	void tableevent(ArrayList<Docgia> listDG ) {
 		event = new TableActionEvent() {
 			
 			@Override
 			public void onView(int row) {
-				if(row >= 0 && row < listDocgia.size())
+				if(row >= 0 && row < listDG.size())
 				{
-					Docgia selectedDocgia =  listDocgia.get(row);
-					//qldocgia xem =  new qldocgia(qlnm,true,selectedDocgia);					
-					//qldocgia.setVisible(false);					
-					//xem.setVisible(true);
+					Docgia selectedDG =  listDG.get(row);
+					XemDocgia xem =  new XemDocgia(parentFrame,true,selectedDG);
+					xem.setVisible(true);
 				}
 			}
-			
 			@Override
 			public void onEdit(int row) {
 				edit = row;
-				if(row >= 0 && row < listDocgia.size())
+				if(row >= 0 && row < listDG.size())
 				{
-					Docgia selecteddocgia =  listDocgia.get(row);
-					UpdateDocgia up =  new UpdateDocgia(parentFrame,true,selecteddocgia);
-					
+					Docgia selectedDG =  listDG.get(row);
+					UpdateDocgia up =  new UpdateDocgia(parentFrame,true,selectedDG);
 					up.setVisible(true);
-					
-					//up.setVisible(true);
 				}
 			}
 			
 			@Override
 			public void onDelete(int row) {
-			    if (row >= 0 && row < listDocgia.size()) {
-			        Docgia selectedDocgia = listDocgia.get(row);
-			        
-			        int option = JOptionPane.showConfirmDialog(parentFrame, "Bạn có chắc chắn muốn xóa?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
-			        
-			        if (option == JOptionPane.YES_OPTION) {
-			            int result = DocgiaDAO.getInstance().Delete(selectedDocgia);
-						if (result > 0) {
-						    listDocgia.remove(row);
-						    tableModel.removeRow(row);
-						    tableModel.fireTableDataChanged();
-						    JOptionPane.showMessageDialog(parentFrame, "Xóa thành công");
-						} else {
-						    JOptionPane.showMessageDialog(parentFrame, "Xóa không thành công");
-						}
-			        }
-			    } else {
-			        JOptionPane.showMessageDialog(parentFrame, "Hàng không hợp lệ");
-			    }
+				Docgia selectedDG =  listDG.get(row);
+				 int result = JOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa không?", "Thông Báo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		            if (result == JOptionPane.YES_OPTION) {
+////		            	
+		            	DocgiaDao.getInstance().Delete(selectedDG);
+		            	reloadDataAndRefreshPanel();
+		               
+		                JOptionPane.showMessageDialog(contentPane, "Xóa thành công");
+		                //showListDocgia(listDocgia);
+		            }
 			}
-
-
 		};
-        tableModel.setRowCount(0);
+	}
+	private void showListDocgia(ArrayList<Docgia> listDG ) {
+		tableevent(listDG);
+		tableModel.setRowCount(0);
         //int stt = 1;
-        for (Docgia e : listDocgia) {
+        for (Docgia e : listDG) {
             Object[] row = new Object[]{ e.get_id(),
                 e.get_hoten(),e.get_ns(),e.get_diachi(), e.get_sdt()
                 };
             tableModel.addRow(row);
+            }
+        
             tableModel.fireTableDataChanged();
             table.setRowHeight(45);
 	        table.setModel(tableModel);
@@ -154,64 +112,72 @@ public class panelQlydocgia extends JPanel {
 	        table.getColumnModel().getColumn(1).setPreferredWidth(80);
 	        //table.getColumnModel().getColumn(0).setPreferredWidth(15);
 	        //table.getColumnModel().getColumn(0).setPreferredWidth(15);
-        }
 
     }
-	public void SearchQuery() {
-	    try {
-	        String column = cg.getSelectedCheckbox().getLabel();
-	        String value = textField.getText();
-	        String query = "";
-
-	        if(column.equals("Theo ID")) query = "select * from docgia where Id_docgia ='" + value + "'";
-	        else if(column.equals("Theo Tên")) query = "select * from docgia where Name_docgia LIKE '%" + value + "%'";
-	        else if(column.equals("Theo Ngày sinh")) query = "select * from docgia where Ns_docgia LIKE '%" + value + "%'";
-	        else if(column.equals("Theo Địa chỉ")) query = "select * from docgia where Dc_docgia LIKE '%" + value + "%'";
-	        else if(column.equals("Theo Số điện thoại")) query = "select * from docgia where Sdt_docgia LIKE '%" + value + "%'";
-
-	        
-
-	        Class.forName("com.mysql.cj.jdbc.Driver");
-	        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/pbl3", "root", "");
-	        PreparedStatement stmt = conn.prepareStatement(query);
-
-	        ResultSet rs = stmt.executeQuery();
-	        DefaultTableModel model = (DefaultTableModel) table.getModel();
-	        model.setRowCount(0);
-	        ResultSetMetaData metadata = rs.getMetaData();
-	        int columnCount = metadata.getColumnCount();
-	        while (rs.next()) {
-	            Object[] row = new Object[columnCount];
-	            for (int i = 1; i <= columnCount; i++) {
-	                row[i - 1] = rs.getObject(i);
-	            }
-	            model.addRow(row);
-	        }
-	        conn.close();
-	    } catch (Exception ex) {
-	        ex.printStackTrace();
-	    }
+	private void SearchQuery() {
+		String t =  textField.getText();
+		try {
+			if(!t.isEmpty())
+			{
+				if(comboBox.getSelectedItem().equals("Họ tên"))
+				{
+					ArrayList<Docgia> arr = DocgiaDao.getInstance().searchDGID(listDocgia,t, 0);
+					if(arr.size() > 0)
+						showListDocgia(arr);
+					else
+					{
+						JOptionPane.showMessageDialog(qld, "Không tìm thấy Họ tên phù hợp");
+						textField.setText(null);
+					}
+				}
+				if(comboBox.getSelectedItem().equals("ID"))
+				{
+					ArrayList<Docgia> arr = DocgiaDao.getInstance().searchDGID(listDocgia,t, 1);
+					if(arr.size() > 0)
+						showListDocgia(arr);
+					else
+					{
+						JOptionPane.showMessageDialog(qld, "Không tìm thấy ID phù hợp");
+						textField.setText(null);
+					}
+				}
+				if(comboBox.getSelectedItem().equals("SĐT"))
+				{
+					ArrayList<Docgia> arr = DocgiaDao.getInstance().searchDGID(listDocgia,t, 2);
+					if(arr.size() > 0)
+						showListDocgia(arr);
+					else
+					{
+						JOptionPane.showMessageDialog(qld, "Không tìm thấy SĐT phù hợp");
+						textField.setText(null);
+					}
+				}
+			}
+			else
+			JOptionPane.showMessageDialog(qld, "Bạn chưa nhập dữ liệu tìm kiếm","Thông Báo",JOptionPane.OK_OPTION);
+			
+			
+			} catch (Exception e2) {
+			
+		}
 	}
-
-
-	
 	 public void editDocgia(Docgia b) {
-	        listDocgia.set(edit, b);
 	        DocgiaDAO.getInstance().Update(b);
-	        tableModel.removeRow(edit);
-	        Object[] row = new Object[]{ b.get_id(),
-	                b.get_hoten(),b.get_ns(),b.get_diachi(), b.get_sdt()
-	                };
-	        tableModel.insertRow(edit, row);
-	        tableModel.fireTableDataChanged();
+	        reloadDataAndRefreshPanel();
 	    }
-	 
+	 public void reloadDataAndRefreshPanel() {
+		    // Cập nhật dữ liệu
+		    listDocgia.clear();
+		    DocgiaDao.getInstance().selectAll(listDocgia);
+		    
+		    showListDocgia(listDocgia);
+		}
 	public void initComponents() {
 		new JPanel();
 		//setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		 setBackground(new Color(129, 203, 196));
 		this.setLayout(null);
-		setBounds(275, 0, 975, 725);
+		this.setBounds(275, 0, 825, 725);
 	
 	JLabel lblNewLabel = new JLabel("Quản lý Độc giả");
 	lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
@@ -220,16 +186,16 @@ public class panelQlydocgia extends JPanel {
 	
 	JLabel lblNewLabel_1 = new JLabel("Tìm kiếm");
 	lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 15));
-	lblNewLabel_1.setBounds(48, 104, 71, 21);
+	lblNewLabel_1.setBounds(214, 104, 71, 21);
 	this.add(lblNewLabel_1);
 	
 	textField = new JTextField();
-	textField.setBounds(151, 102, 217, 27);
+	textField.setBounds(297, 102, 256, 27);
 	this.add(textField);
 	textField.setColumns(10);
 	
 	JScrollPane scrollPane = new JScrollPane();
-	scrollPane.setBounds(21, 225, 842, 305);
+	scrollPane.setBounds(22, 157, 786, 305);
 	this.add(scrollPane);
 	
 	table = new JTable();
@@ -261,34 +227,38 @@ public class panelQlydocgia extends JPanel {
 
 		}
 	});
-	btnNew.setBounds(433, 45, 141, 41);
+	btnNew.setBounds(643, 478, 141, 41);
 	this.add(btnNew);
 	
 	JButton btnSearch = new JButton("Tìm");
 	btnSearch.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == btnSearch) {
-	            if (!textField.getText().isEmpty() && cg.getSelectedCheckbox() != null) {
+	            if (!textField.getText().isEmpty() ) {
 	                SearchQuery();
 	            } else {
 	                JOptionPane.showMessageDialog(null, "Vui lòng điền thông tin cần", "Warning", JOptionPane.WARNING_MESSAGE);
 	            }
 	        }
-			
+//			
 		}
 	});
-	btnSearch.setBounds(470, 98, 103, 35);
+	btnSearch.setBounds(575, 99, 103, 35);
 	this.add(btnSearch);
 	
-	JPanel pn = new JPanel();
-	pn.setBounds(48, 146, 476, 67);
-	this.add(pn);
-	cg = new CheckboxGroup();
-    pn.add(new Checkbox("Theo ID", cg, false));
-    pn.add(new Checkbox("Theo Tên", cg, false));
-    pn.add(new Checkbox("Theo Ngày sinh", cg, false));
-    pn.add(new Checkbox("Theo Địa chỉ", cg, false));
-    pn.add(new Checkbox("Theo Số điện thoại", cg, false));
+	comboBox = new JComboBox();
+	comboBox.setModel(new DefaultComboBoxModel(new String[] {"Họ tên", "ID", "SĐT"}));
+	comboBox.setBounds(61, 103, 141, 27);
+	add(comboBox);
 	
+	JButton btnReset = new JButton("Reset");
+	btnReset.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			reloadDataAndRefreshPanel();
+		}
+	});
+	btnReset.setBounds(702, 99, 103, 35);
+	add(btnReset);
 	}
-}
+}	
+

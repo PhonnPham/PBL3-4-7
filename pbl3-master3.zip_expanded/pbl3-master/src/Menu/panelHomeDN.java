@@ -98,9 +98,9 @@ public class panelHomeDN extends JPanel {
 			ArrayList<String> authors = listSach.stream().map(Sach::get_tacgia).distinct().collect(Collectors.toCollection(ArrayList::new));
 			ArrayList<String> genres = listSach.stream().map(Sach::get_theloai).distinct().collect(Collectors.toCollection(ArrayList::new));
 			ArrayList<String> publishers = listSach.stream().map(Sach::get_namxb).distinct().collect(Collectors.toCollection(ArrayList::new));
-			authors.add(0, "All");
-		    genres.add(0, "All");
-		    publishers.add(0, "All");
+			authors.add(0, "Tác giả");
+		    genres.add(0,"Thể Loại");
+		    publishers.add(0, "Năm xuất bản");
 			cBTacgia.setModel(new DefaultComboBoxModel<>(authors.toArray(new String[0])));
 			cBTheloai.setModel(new DefaultComboBoxModel<>(genres.toArray(new String[0])));
 			cBnxb.setModel(new DefaultComboBoxModel<>(publishers.toArray(new String[0])));
@@ -123,7 +123,7 @@ public class panelHomeDN extends JPanel {
 		
 		txtNhap = new JTextField();
 		txtNhap.setBackground(new Color(250, 250, 250));
-		txtNhap.setBounds(100, 193, 249, 21);
+		txtNhap.setBounds(100, 136, 249, 21);
 		this.add(txtNhap);
 		txtNhap.setColumns(10);
 		
@@ -131,18 +131,18 @@ public class panelHomeDN extends JPanel {
 		lblNewLabel_7.setForeground(new Color(255, 255, 255));
 		lblNewLabel_7.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblNewLabel_7.setHorizontalAlignment(SwingConstants.LEFT);
-		lblNewLabel_7.setBounds(27, 186, 86, 38);
+		lblNewLabel_7.setBounds(27, 129, 86, 38);
 		this.add(lblNewLabel_7);
 		
 		comboBox = new JComboBox();
 		comboBox.setModel(new DefaultComboBoxModel(new String[] {"ID", "Tên tác giả"}));
 		comboBox.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		comboBox.setBackground(new Color(255, 255, 255));
-		comboBox.setBounds(359, 193, 110, 21);
+		comboBox.setBounds(383, 139, 110, 21);
 		this.add(comboBox);
 		
 		JScrollPane scrollPaneTable = new JScrollPane();
-		scrollPaneTable.setBounds(27, 276, 725, 428);
+		scrollPaneTable.setBounds(23, 202, 725, 464);
 		this.add(scrollPaneTable);
 		
 		table = new JTable();
@@ -161,6 +161,7 @@ public class panelHomeDN extends JPanel {
 	        });
 		scrollPaneTable.setViewportView(table);
 		JButton btnsearch = new JButton("Tìm kiếm");
+		btnsearch.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
 		btnsearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String t = txtNhap.getText();
@@ -209,7 +210,7 @@ public class panelHomeDN extends JPanel {
 		});
 		btnsearch.setIcon(new ImageIcon("C:\\Users\\hoang\\OneDrive\\Documents\\Pictures\\Ảnh cho pbl3\\Search.png"));
 		btnsearch.setBackground(new Color(69, 167, 157));
-		btnsearch.setBounds(482, 193, 101, 21);
+		btnsearch.setBounds(552, 135, 101, 23);
 		this.add(btnsearch);
 
 		JButton btnNewButton_1 = new JButton("Resest");
@@ -224,40 +225,41 @@ public class panelHomeDN extends JPanel {
 			}
 		});
 		btnNewButton_1.setBackground(new Color(69, 167, 157));
-		btnNewButton_1.setBounds(653, 224, 81, 27);
+		btnNewButton_1.setBounds(665, 170, 66, 21);
 		this.add(btnNewButton_1);
 		
 		cBTacgia = new JComboBox();
-		cBTacgia.setBounds(100, 225, 132, 27);
+		cBTacgia.setBounds(100, 168, 132, 27);
 		add(cBTacgia);
 		
 		cBnxb = new JComboBox();
-		cBnxb.setBounds(411, 225, 132, 27);
+		cBnxb.setBounds(411, 168, 132, 27);
 		add(cBnxb);
 		
 		cBTheloai = new JComboBox();
-		cBTheloai.setBounds(253, 225, 132, 27);
+		cBTheloai.setBounds(253, 168, 132, 27);
 		add(cBTheloai);
 		
 		JLabel lblNewLabel_7_1 = new JLabel("Lọc:");
 		lblNewLabel_7_1.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNewLabel_7_1.setForeground(Color.WHITE);
 		lblNewLabel_7_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNewLabel_7_1.setBounds(27, 223, 59, 27);
+		lblNewLabel_7_1.setBounds(27, 166, 59, 27);
 		add(lblNewLabel_7_1);
 		
 		JLabel lblNewLabel_1 = new JLabel("Chào mừng bạn đến với thư viện, nơi kết nối con người với tri thức. \r\n");
 		lblNewLabel_1.setVerticalAlignment(SwingConstants.TOP);
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblNewLabel_1.setBounds(27, 93, 559, 23);
+		lblNewLabel_1.setBounds(27, 57, 559, 23);
 		this.add(lblNewLabel_1);
 		
 		JLabel lblNewLabel_1_1 = new JLabel("Với hàng nghìn cuốn sách đa dạng, chúng tôi mời bạn khám phá thế giới.");
 		lblNewLabel_1_1.setVerticalAlignment(SwingConstants.TOP);
 		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblNewLabel_1_1.setBounds(27, 119, 559, 23);
+		lblNewLabel_1_1.setBounds(27, 83, 559, 23);
 		this.add(lblNewLabel_1_1);
 		JButton btn = new JButton("Lọc");
+		btn.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
 		btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String tacgia = (String) cBTacgia.getSelectedItem();
@@ -267,7 +269,7 @@ public class panelHomeDN extends JPanel {
 			}
 		});
 		btn.setBackground(new Color(69, 167, 157));
-		btn.setBounds(565, 231, 66, 21);
+		btn.setBounds(552, 171, 101, 21);
 		add(btn);
 		
 		JLabel lblNewLabel = new JLabel("Thư viện Sách PBL3");
@@ -275,15 +277,6 @@ public class panelHomeDN extends JPanel {
 		lblNewLabel.setBounds(27, 6, 295, 59);
 		add(lblNewLabel);
 		
-//		JButton btnNewButton_1_1 = new JButton("Đăng nhập");
-//		btnNewButton_1_1.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				//dn = new DNhap(parentFrame,menu);
-//				dn.setVisible(true);
-//			}
-//		});
-//		btnNewButton_1_1.setBounds(608, 21, 126, 31);
-//		add(btnNewButton_1_1);
 	}
 	}
 

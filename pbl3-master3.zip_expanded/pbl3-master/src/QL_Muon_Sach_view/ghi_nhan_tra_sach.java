@@ -66,47 +66,8 @@ public class ghi_nhan_tra_sach extends JDialog {
 	private ThuthuDAO thuthuDAO; 
 	private JTextField txtTinhtrang;
     
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					ghi_nhan_tra_sach frame = new ghi_nhan_tra_sach();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
-	/**
-	 * Create the frame.
-	 * @wbp.parser.constructor
-	 */
-	public ghi_nhan_tra_sach(panelQlymuon qlm) {
-		
-		this.qlm = qlm;
-		this.home = qlm.parentFrame;
-		initComponents();
-		Sach = new Sach();
-		Docgia = new Docgia();
-		listphieu = new ArrayList<>();
-		listhoadon = new ArrayList<>();
-		 DGDao = new DocgiaDAO();
-		 SachDao = new SachDAO();	
-		 PhieuDAO = new PhieuDAO();
-		 hoadonDAO = new HoadonDAO();
-		 PhieuDAO.getInstance().selectAll(listphieu);
-		 hoadonDAO.getInstance().selectAll(listhoadon);
-		 setccbIDPhieu();
-		 setccbTinhtrang();
-		 idp = setIDPhieu(listphieu);
-		 idhd = setIDHoadon(listhoadon);
-		 thuthuDAO = new ThuthuDAO();
-	}
+
 public ghi_nhan_tra_sach(home frame,panelQlymuon qlm, int id) {
 		super(frame, true);
 		this.qlm = qlm;
@@ -405,8 +366,10 @@ public ghi_nhan_tra_sach(home frame,panelQlymuon qlm, int id) {
 		            Date date2 = dateChooserNT_1.getDate();
 		            if (date1 != null && date2 != null) {
 		                // Tính toán khoảng cách giữa hai ngày và hiển thị nó
-		                int diffInDays = (int)Math.abs((date2.getTime() - date1.getTime()) / (1000 * 60 * 60 * 24));
+		                int diffInDays = (int)((date2.getTime() - date1.getTime()) / (1000 * 60 * 60 * 24));
+		                if(diffInDays > 0)
 		                phat = diffInDays*2000;
+		                else phat = 0;
 		                // lấy phạt trình trạng
 		                
 		          
@@ -499,8 +462,9 @@ public ghi_nhan_tra_sach(home frame,panelQlymuon qlm, int id) {
 		    	  Hoadon h = new Hoadon(++idhd,Bientoancuc.tt.get_id(),phieu.get_id_phieu(),dateChooserNT_1.getDate(),tongphat);
 		    	  hoadonDAO.Insert(h);
 		      }
+			 qlm.reloadDataAndRefreshPanel();
 			dispose();
-			qlm.reloadDataAndRefreshPanel();
+			
 		}
 	});
 	btnNewButton_1.setBounds(724, 586, 117, 29);

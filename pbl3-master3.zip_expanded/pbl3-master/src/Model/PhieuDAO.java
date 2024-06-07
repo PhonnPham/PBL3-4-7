@@ -168,23 +168,57 @@ public class PhieuDAO implements DAOInterface<phieumuon>
         return null;
 
     }
-	public ArrayList<phieumuon> searchDGID(ArrayList<phieumuon> listPhieu, String t)
-	{
-		int a = Integer.parseInt(t);
-		ArrayList<phieumuon> listSearchRB =  new ArrayList<>();
-		if(listPhieu.size() > 0)
-		{
-			for(phieumuon e : listPhieu)
-			{
-				if(e.get_id_docgia() ==  a)
-				{
-					listSearchRB.add(e);
-				}
-			}
-		}
-		return listSearchRB;
-	}
+//	public ArrayList<phieumuon> searchDGID(ArrayList<phieumuon> listPhieu, String t)
+//	{
+//		int a = Integer.parseInt(t);
+//		ArrayList<phieumuon> listSearchRB =  new ArrayList<>();
+//		if(listPhieu.size() > 0)
+//		{
+//			for(phieumuon e : listPhieu)
+//			{
+//				if(e.get_id_docgia() ==  a)
+//				{
+//					listSearchRB.add(e);
+//				}
+//			}
+//		}
+//		return listSearchRB;
+//	}
+	public int getTotalBookMuon() {
+	    int t = 0;
+	    DataSource data = ketNoiSQL();
+	    String query = "SELECT SUM(Soluong) FROM phieumuon";
 
+	    try (Connection conn = data.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(query);
+	         ResultSet resultSet = ps.executeQuery()) {
+	         
+	        if (resultSet.next()) {
+	            t = resultSet.getInt(1);
+	        }
+	    } catch (SQLException ex) {
+	        ex.printStackTrace();
+	    }
+
+	    return t;
+	}
+	public int getTotalUniquePhieu() {
+	    int t = 0;
+	    DataSource data = ketNoiSQL();
+	    String query = "SELECT COUNT(DISTINCT Id_phieu) FROM phieumuon";
+
+	    try (Connection conn = data.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(query);
+	         ResultSet resultSet = ps.executeQuery()) {
+	         
+	        if (resultSet.next()) {
+	            t = resultSet.getInt(1);
+	        }
+	    } catch (SQLException ex) {
+	        ex.printStackTrace();
+	    }
+	    return t;
+	}
 
 	@Override
 	public phieumuon selectById(phieumuon t) {
@@ -197,7 +231,26 @@ public class PhieuDAO implements DAOInterface<phieumuon>
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	  public ArrayList<phieumuon> searchDGID(ArrayList<phieumuon> listP , String t, int dk)
+		{
+			ArrayList<phieumuon> list =  new ArrayList<>();
+			if(listP.size() > 0)
+			{
+				for(phieumuon e : listP)
+				{	
+					if(dk == 0 && String.valueOf(e.get_id_phieu()).toLowerCase().contains(t.toLowerCase()))
+					{
+						list.add(e);
+					}
+					if(dk == 1 && String.valueOf(e.get_id_docgia()).toLowerCase().contains(t.toLowerCase()))
+					{
+						list.add(e);
+					}
+		
+				}
+			}
+			return list;
+		}
 
 
 

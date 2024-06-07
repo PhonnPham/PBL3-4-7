@@ -40,7 +40,7 @@ public class ThuthuDAO implements DAOInterface<Thuthu> {
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, t.get_id());
             ps.setString(2, t.get_hoten());
-            ps.setDate(3, (Date) t.get_ns());
+            ps.setDate(3, new java.sql.Date(t.get_ns().getTime()));
             ps.setString(4, t.get_diachi());
             ps.setString(5, t.get_cccd());
             ps.setString(6, t.get_sdt());
@@ -62,7 +62,7 @@ public class ThuthuDAO implements DAOInterface<Thuthu> {
                     + "Sdt_tt = ?, Email_tt = ?, Username_tt = ?, Password_tt = ? WHERE Id_tt= ?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, t.get_hoten());
-            ps.setDate(2, (Date) t.get_ns());
+            ps.setDate(2, new java.sql.Date(t.get_ns().getTime()));
             ps.setString(3, t.get_diachi());
             ps.setString(4, t.get_cccd());
             ps.setString(5, t.get_sdt());
@@ -192,7 +192,47 @@ public class ThuthuDAO implements DAOInterface<Thuthu> {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-		
+	
+	}
+	public ArrayList<Thuthu> searchTT(ArrayList<Thuthu> listTT, String t, int dk)
+	{
+		ArrayList<Thuthu> listSearchTT =  new ArrayList<>();
+		if(listTT.size() > 0)
+		{
+			for(Thuthu e : listTT)
+			{	
+				if(dk == 0 && String.valueOf(e.get_id()).toLowerCase().contains(t.toLowerCase()))
+				{
+					listSearchTT.add(e);
+				}
+				if(dk == 1 && String.valueOf(e.get_cccd()).toLowerCase().contains(t.toLowerCase()))
+				{
+					listSearchTT.add(e);
+				}
+				if(dk == 2 && String.valueOf(e.get_hoten()).toLowerCase().contains(t.toLowerCase()))
+				{
+					listSearchTT.add(e);
+				}
+			}
+		}
+		return listSearchTT;
+	}
+	public int getTotalUniqueTT() {
+	    int t = 0;
+	    DataSource data = ketNoiSQL();
+	    String query = "SELECT COUNT(DISTINCT Id_tt) FROM thuthu";
+
+	    try (Connection conn = data.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(query);
+	         ResultSet resultSet = ps.executeQuery()) {
+	         
+	        if (resultSet.next()) {
+	            t = resultSet.getInt(1);
+	        }
+	    } catch (SQLException ex) {
+	        ex.printStackTrace();
+	    }
+	    return t;
 	}
 
 }

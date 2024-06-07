@@ -54,7 +54,7 @@ public class panelQlyhoadon extends JPanel {
         PhieuDAO = new PhieuDAO();
         tableModel = (DefaultTableModel) table.getModel();
         HoadonDAO.getInstance().selectAll(listHoadon);
-        showListHoadon();
+        showListHoadon(listHoadon);
     }
 
     private void initComponents() {
@@ -97,49 +97,32 @@ public class panelQlyhoadon extends JPanel {
         txtNhap.setColumns(10);
 
         comboBox = new JComboBox();
-        comboBox.setModel(new DefaultComboBoxModel(new String[] {"ID Hóa Đơn", "ID Phiếu"}));
-        comboBox.setBounds(330, 118, 85, 21);
+        comboBox.setModel(new DefaultComboBoxModel(new String[] {"ID Phiếu", "ID Hóa đơn", "Mã Thủ thư"}));
+        comboBox.setBounds(330, 118, 116, 21);
         add(comboBox);
 
         JButton btnTim = new JButton("Tìm");
         btnTim.setBackground(new Color(128, 128, 128));
         btnTim.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String t = txtNhap.getText();
-                try {
-                    if (!t.isEmpty()) {
-                        if (comboBox.getSelectedItem().equals("ID Hóa Đơn")) {
-                            Hoadon rb = HoadonDAO.getInstance().selectById(new Hoadon(Integer.parseInt(t), 0, 0, null, 0));
-                            if (rb != null)
-                                showSeachHoadonID(rb);
-                            else {
-                                JOptionPane.showMessageDialog(qlh, "Không tìm thấy ID hóa đơn phù hợp");
-                                txtNhap.setText(null);
-                            }
-                        }
-                        if (comboBox.getSelectedItem().equals("ID Phiếu")) {
-                            ArrayList<Hoadon> listSearchRB = HoadonDAO.getInstance().selectByCondition("Id_phieu = " + t);
-                            if (listSearchRB.size() > 0)
-                                // showSearchHoadonList(listSearchRB);
-                                ;
-                        }
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+            public void actionPerformed(ActionEvent e) { 
+            	if (!txtNhap.getText().isEmpty() ) {
+            		SearchQuery();
+            	} else {
+            		JOptionPane.showMessageDialog(null, "Vui lòng điền thông tin cần", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
             }
         });
         btnTim.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        btnTim.setBounds(430, 116, 85, 21);
+        btnTim.setBounds(495, 117, 96, 21);
         add(btnTim);
     }
 
-    void TableEvent() {
+    void TableEvent(ArrayList<Hoadon> listHD) {
         event = new TableActionEvent() {
             @Override
             public void onView(int row) {
-                if (row >= 0 && row < listHoadon.size()) {
-                    Hoadon selectedHoadon = listHoadon.get(row);
+                if (row >= 0 && row < listHD.size()) {
+                    Hoadon selectedHoadon = listHD.get(row);
                     // selectedHoadon.get_id_phieu();
                     // XemTTHoadon xem = new XemTTHoadon(parentFrame, true, selectedHoadon, selectedPhieu, qlh);
                     // xem.setVisible(true);
@@ -149,8 +132,8 @@ public class panelQlyhoadon extends JPanel {
             @Override
             public void onEdit(int row) {
                 edit = row;
-                if (row >= 0 && row < listHoadon.size()) {
-                    Hoadon selectedHoadon = listHoadon.get(row);
+                if (row >= 0 && row < listHD.size()) {
+                    Hoadon selectedHoadon = listHD.get(row);
                     // selectedPhieu = PhieuDAO.selectedId(selectedHoadon.get_id_phieu());
                     // CapNhatTTHoadon xem = new CapNhatTTHoadon(parentFrame, true, selectedHoadon, selectedPhieu, qlh);
                     // xem.setVisible(true);
@@ -159,24 +142,27 @@ public class panelQlyhoadon extends JPanel {
 
             @Override
             public void onDelete(int row) {
-                Hoadon selectedHoadon = listHoadon.get(row);
+                Hoadon selectedHoadon = listHD.get(row);
                 int result = JOptionPane.showConfirmDialog(qlh, "Bạn có chắc muốn xóa không?", "Thông Báo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (result == JOptionPane.YES_OPTION) {
+                if (result == JOptionPane.YES_OPTION && !Bientoancuc.ad.getUserName().isEmpty()) {
                     HoadonDAO.getInstance().Delete(selectedHoadon);
                     listHoadon.remove(selectedHoadon);
                     tableModel.setRowCount(0);
                     tableModel.fireTableDataChanged();
                     JOptionPane.showMessageDialog(qlh, "Xóa thành công");
-                    showListHoadon();
+                    showListHoadon(listHoadon);
                 }
             }
         };
     }
 
-    void tableData() {
+   
+
+    void showListHoadon(ArrayList<Hoadon> listHD) {
+        TableEvent(listHD);
         tableModel.setRowCount(0);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        for (Hoadon e : listHoadon) {
+        for (Hoadon e : listHD) {
             // selectedPhieu = PhieuDAO.selectedId(e.get_id_phieu());
             Object[] row = new Object[]{e.get_id_hoadon(), e.get_id_tt(), e.get_id_phieu(), dateFormat.format(e.get_ngayttoan()), e.get_tongtien()};
             tableModel.addRow(row);
@@ -194,11 +180,6 @@ public class panelQlyhoadon extends JPanel {
         }
     }
 
-    void showListHoadon() {
-        TableEvent();
-        tableData();
-    }
-
     public void editHoadon(Hoadon b) {
         listHoadon.set(edit, b);
         HoadonDAO.getInstance().Update(b);
@@ -212,12 +193,51 @@ public class panelQlyhoadon extends JPanel {
             tableModel.fireTableDataChanged();
         }
     }
-
-    private void showSeachHoadonID(Hoadon rb) {
-        // Your implementation to display the search result by ID Hóa Đơn
-    }
-
-    // private void showSearchHoadonList(ArrayList<Hoadon> listSearchRB) {
-    //     // Your implementation to display the search result by ID Phiếu
-    // }
+    public void SearchQuery() {
+		String t =  txtNhap.getText();
+		try {
+			if(!t.isEmpty())
+			{
+				if(comboBox.getSelectedItem().equals("ID Phiếu"))
+				{
+					ArrayList<Hoadon> arr = HoadonDAO.getInstance().searchHD(listHoadon,t, 0);
+					if(arr.size() > 0)
+						showListHoadon(arr);
+					else
+					{
+						JOptionPane.showMessageDialog(qlh, "Không tìm thấy ID Phiếu phù hợp");
+						txtNhap.setText(null);
+					}
+				}
+				if(comboBox.getSelectedItem().equals("ID Hoá đơn"))
+				{
+					ArrayList<Hoadon> arr = HoadonDAO.getInstance().searchHD(listHoadon,t,1);
+					if(arr.size() > 0)
+						showListHoadon(arr);
+					else
+					{
+						JOptionPane.showMessageDialog(qlh, "Không tìm thấy ID phù hợp");
+						txtNhap.setText(null);
+					}
+				}
+				if(comboBox.getSelectedItem().equals("Mã Thủ thư"))
+				{
+					ArrayList<Hoadon> arr = HoadonDAO.getInstance().searchHD(listHoadon,t, 2);
+					if(arr.size() > 0)
+						showListHoadon(arr);
+					else
+					{
+						JOptionPane.showMessageDialog(qlh, "Không tìm thấy Mã Thủ thư phù hợp");
+						txtNhap.setText(null);
+					}
+				}
+			}
+			else
+			JOptionPane.showMessageDialog(qlh, "Bạn chưa nhập dữ liệu tìm kiếm","Thông Báo",JOptionPane.OK_OPTION);
+			
+			
+			} catch (Exception e2) {
+			
+		}
+	}
 }

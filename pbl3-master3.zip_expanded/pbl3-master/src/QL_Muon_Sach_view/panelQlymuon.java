@@ -47,14 +47,14 @@ public class panelQlymuon extends JPanel {
 /**
 	 * Create the panel.
 	 */
-	void TableEvent() {
+	void TableEvent(ArrayList<phieumuon> listP) {
 		event = new TableActionEvent() {
 			
 			@Override
 			public void onView(int row) {
-				if(row >= 0 && row < listPhieu.size())
+				if(row >= 0 && row < listP.size())
 				{
-					phieumuon selectedPhieu =  listPhieu.get(row);
+					phieumuon selectedPhieu =  listP.get(row);
 					selectedPhieu.get_id_sach();
 					XemTTPhieu xem =  new XemTTPhieu(parentFrame,true,selectedPhieu,selectedsach,selectedDocgia,qlm);
 					xem.setVisible(true);
@@ -63,9 +63,9 @@ public class panelQlymuon extends JPanel {
 			@Override
 			public void onEdit(int row) {
 				edit = row;
-				if(row >= 0 && row < listPhieu.size())
+				if(row >= 0 && row < listP.size())
 				{
-					phieumuon selectedPhieu =  listPhieu.get(row);
+					phieumuon selectedPhieu =  listP.get(row);
 					
 					 selectedsach = SachDAO.selectedId(selectedPhieu.get_id_sach());
 					 selectedDocgia = DocgiaDAO.selectedId(selectedPhieu.get_id_docgia());
@@ -76,45 +76,25 @@ public class panelQlymuon extends JPanel {
 			}
 			@Override
 			public void onDelete(int row) {
-				phieumuon selectedPhieu =  listPhieu.get(row);
+				phieumuon selectedPhieu =  listP.get(row);
 				 int result = JOptionPane.showConfirmDialog(qlm, "Bạn có chắc muốn xóa không?", "Thông Báo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		            if (result == JOptionPane.YES_OPTION) {
+		            	if(selectedPhieu.getGiveBookBack().equals("Đã trả"))
+		            	{	if(selectedPhieu.get_phimuon() == 0) {
 		            	PhieuDAO.getInstance().Delete(selectedPhieu);
-		                listPhieu.remove(selectedPhieu);
-		                tableModel.setRowCount(0); // Xóa dữ liệu từ mô hình hiện tại
-		                tableModel.fireTableDataChanged(); // Cập nhật hiển thị của bảng
+		            	reloadDataAndRefreshPanel();
 		                JOptionPane.showMessageDialog(qlm, "Xóa thành công");
-		                showListPhieu();
+		                showlistPhieu(listPhieu);
+		            	}else {
+		            		JOptionPane.showMessageDialog(qlm, "Phiếu mượn có hoá đơn, không thể xoá");
+		            	}
+		            	} else {
+		            		JOptionPane.showMessageDialog(qlm, "Phiếu mượn chưa ghi nhận trả");
+		            	}
 		            }
 			} 
 		};
 	}
-	void tableData() {
-		tableModel.setRowCount(0);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        for (phieumuon e : listPhieu) {
-        	selectedsach = SachDAO.selectedId(e.get_id_sach());
-			 selectedDocgia = DocgiaDAO.selectedId(e.get_id_docgia());
-            Object[] row = new Object[]{ e.get_id_phieu(),selectedDocgia.get_hoten(),
-                e.get_id_sach(),selectedsach.get_tensach(),e.get_soluong(), dateFormat.format(e.get_ngaymuon()), e.getGiveBookBack()
-                };
-            tableModel.addRow(row);
-            tableModel.fireTableDataChanged();
-            table.setRowHeight(45);
-	        table.setModel(tableModel);
-	        table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellRenderer(new TableActionCellRender());
-	        table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellEditor(new TableActionCellEditor(event));
-            
-	        table.getColumnModel().getColumn(0).setPreferredWidth(15);
-	        table.getColumnModel().getColumn(1).setPreferredWidth(80);
-	        table.getColumnModel().getColumn(0).setPreferredWidth(15);
-	        table.getColumnModel().getColumn(0).setPreferredWidth(15);
-        }
-	}
-	 void showListPhieu() {
-		 TableEvent();
-		 tableData();
-    }
 	
 	 public void editPhieu(phieumuon b) {
 	        listPhieu.set(edit, b);
@@ -142,9 +122,45 @@ public class panelQlymuon extends JPanel {
 		    tableModel = (DefaultTableModel) table.getModel();
 			PhieuDAO.getInstance().selectAll(listPhieu);
 			
-		    showListPhieu();
-		}
+			showlistPhieu(listPhieu);
+		}	
+		private void showlistPhieu(ArrayList<phieumuon> listPhieu)
+		{
+			
+				TableEvent(listPhieu);
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+				tableModel.setRowCount(0);
+				for (phieumuon e : listPhieu) {
+					selectedsach = SachDAO.selectedId(e.get_id_sach());
+					 selectedDocgia = DocgiaDAO.selectedId(e.get_id_docgia());
+					Object[] row = new Object[]{ e.get_id_phieu(),selectedDocgia.get_hoten(),
+		                e.get_id_sach(),selectedsach.get_tensach(),e.get_soluong(), dateFormat.format(e.get_ngaymuon()), e.getGiveBookBack()
+		                };
+					tableModel.addRow(row);
+				}
+					tableModel.fireTableDataChanged();
+					table.setRowHeight(45);
+					table.setModel(tableModel);
+					table.getColumnModel().getColumn(tableModel.getColumnCount() - 1)
+							.setCellRenderer(new TableActionCellRender());
+					
+					table.getColumnModel().getColumn(tableModel.getColumnCount() - 1)
+							.setCellEditor(new TableActionCellEditor(event));
 
+					 table.getColumnModel().getColumn(0).setPreferredWidth(50);
+				     table.getColumnModel().getColumn(1).setPreferredWidth(80);
+				     table.getColumnModel().getColumn(5).setPreferredWidth(100);
+
+
+		}
+		public void reloadDataAndRefreshPanel() {
+		    // Cập nhật dữ liệu
+		    listPhieu.clear();
+		    PhieuDAO.getInstance().selectAll(listPhieu);
+		    
+		    // Hiển thị lại panel
+		    showlistPhieu(listPhieu);
+		}
 		private void initComponents() {
 			this.setBounds(275, 0, 825, 725);
 			    setLayout(null);
@@ -193,16 +209,17 @@ public class panelQlymuon extends JPanel {
 		    add(lblNewLabel_1);
 		    
 		    txtNhap = new JTextField();
-			txtNhap.setBounds(112, 117, 206, 19);
+			txtNhap.setBounds(246, 112, 206, 30);
 			this.add(txtNhap);
 			txtNhap.setColumns(10);
 			
 			comboBox = new JComboBox();
 			comboBox.setModel(new DefaultComboBoxModel(new String[] {"ID Phiếu", "ID Độc Giả"}));
-			comboBox.setBounds(330, 118, 85, 21);
+			comboBox.setBounds(111, 118, 132, 25);
 			this.add(comboBox);
 			
 			JButton btnTim = new JButton("Tim");
+			btnTim.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
 			btnTim.setBackground(new Color(128, 128, 128));
 			btnTim.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -212,20 +229,20 @@ public class panelQlymuon extends JPanel {
 						{
 							if(comboBox.getSelectedItem().equals("ID Phiếu"))
 							{
-								phieumuon  rb =  PhieuDAO.getInstance().seachRegisterId(listPhieu, t);
-								if(rb != null)
-								showSeachPhieuID(rb);
+								ArrayList<phieumuon> list =  PhieuDAO.getInstance().searchDGID(listPhieu, t, 0);
+								if(list.size() > 0 )
+									showlistPhieu(list);
 								else
 								{
-									JOptionPane.showMessageDialog(qlm, "Mã tìm thấy ID phiếu phù hợp");
+									JOptionPane.showMessageDialog(qlm, "Không tìm ID Phiếu phù hợp");
 									txtNhap.setText(null);
 								}
 							}
 							if(comboBox.getSelectedItem().equals("ID Độc Giả"))
 							{
-								ArrayList<phieumuon> listSearchRB =  PhieuDAO.getInstance().searchDGID(listPhieu, t);
-								if(listSearchRB.size() > 0 )
-									showSearchDG(listSearchRB);
+								ArrayList<phieumuon> list =  PhieuDAO.getInstance().searchDGID(listPhieu, t , 1);
+								if(list.size() > 0 )
+									showlistPhieu(list);
 								else
 								{
 									JOptionPane.showMessageDialog(qlm, "Không tìm thấy mã độc giả phù hợp");
@@ -242,7 +259,7 @@ public class panelQlymuon extends JPanel {
 					}
 				}
 			});
-			btnTim.setBounds(427, 116, 78, 25);
+			btnTim.setBounds(471, 116, 123, 25);
 			this.add(btnTim);
 			//button tra
 			JButton btnGhiNhanTr = new JButton("Ghi Nhận Trả");
@@ -258,8 +275,8 @@ public class panelQlymuon extends JPanel {
 				    	
 				    		JOptionPane.showMessageDialog(qlm,"Phiếu mượn đã được trả","Thông Báo",JOptionPane.OK_OPTION);
 				    	}
-				    } else {ghi_nhan_tra_sach = new ghi_nhan_tra_sach(qlm);
-				    	ghi_nhan_tra_sach.setVisible(true);
+				    } else {JOptionPane.showMessageDialog(qlm,"Vui lòng chọn phiếu mượn ","Thông Báo",JOptionPane.OK_OPTION);
+				    	
 				    }
 				  
 					//parentFrame.setVisible(false);
@@ -269,56 +286,17 @@ public class panelQlymuon extends JPanel {
 			btnGhiNhanTr.setBackground(new Color(250, 250, 250));
 			btnGhiNhanTr.setBounds(637, 618, 177, 38);
 			add(btnGhiNhanTr);
-		}
-		private void showSeachPhieuID(phieumuon e) {
-		    TableEvent();
-		    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		    tableModel.setRowCount(0);
-		    Object[] row = new Object[]{ e.get_id_phieu(),selectedDocgia.get_hoten(),
-	                e.get_id_sach(),selectedsach.get_tensach(),e.get_soluong(), dateFormat.format(e.get_ngaymuon()), e.getGiveBookBack()
-	                };
-		    tableModel.addRow(row);
-		    tableModel.fireTableDataChanged();
-		    table.setRowHeight(45);
-		    table.setModel(tableModel);
-		    table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellRenderer(new TableActionCellRender());
-		    table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellEditor(new TableActionCellEditor(event));
-		    table.getColumnModel().getColumn(0).setPreferredWidth(50);
-	        table.getColumnModel().getColumn(1).setPreferredWidth(80);
-	        table.getColumnModel().getColumn(5).setPreferredWidth(100);
-		}
-		private void showSearchDG(ArrayList<phieumuon> listSearchRb)
-		{
 			
-				TableEvent();
-				SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-				tableModel.setRowCount(0);
-				for (phieumuon e : listSearchRb) {Object[] row = new Object[]{ e.get_id_phieu(),selectedDocgia.get_hoten(),
-		                e.get_id_sach(),selectedsach.get_tensach(),e.get_soluong(), dateFormat.format(e.get_ngaymuon()), e.getGiveBookBack()
-		                };
-					tableModel.addRow(row);
-					tableModel.fireTableDataChanged();
-					table.setRowHeight(45);
-					table.setModel(tableModel);
-					table.getColumnModel().getColumn(tableModel.getColumnCount() - 1)
-							.setCellRenderer(new TableActionCellRender());
+			JButton btnReset = new JButton("Reset");
+			btnReset.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					reloadDataAndRefreshPanel();
 					
-					table.getColumnModel().getColumn(tableModel.getColumnCount() - 1)
-							.setCellEditor(new TableActionCellEditor(event));
-
-					 table.getColumnModel().getColumn(0).setPreferredWidth(50);
-				     table.getColumnModel().getColumn(1).setPreferredWidth(80);
-				     table.getColumnModel().getColumn(5).setPreferredWidth(100);
-
 				}
+			});
+			btnReset.setBackground(Color.GRAY);
+			btnReset.setBounds(606, 116, 91, 25);
+			add(btnReset);
+		}
 
-		}
-		public void reloadDataAndRefreshPanel() {
-		    // Cập nhật dữ liệu
-		    listPhieu.clear();
-		    PhieuDAO.getInstance().selectAll(listPhieu);
-		    
-		    // Hiển thị lại panel
-		    showListPhieu();
-		}
 }

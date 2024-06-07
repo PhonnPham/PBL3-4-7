@@ -21,6 +21,8 @@ import Model.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+
+import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -28,10 +30,10 @@ public class home extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane, panelTemp;
-	private panelMenu panelMenu;
+	public panelMenu panelMenu;
 	public int maTT = 0;
 	public boolean Flag;
-	public Thuthu tt;
+	
 	
 	//private ArrayList<Sach> listSach;
 	//private panelQlySach panelQlySach;
@@ -42,10 +44,10 @@ public class home extends JFrame {
 	public static void main(String[] args) {
 		try {
             UIManager.setLookAndFeel(new FlatLightLaf());
+            FlatLaf.registerCustomDefaultsSource("raven.table");
         } catch (UnsupportedLookAndFeelException ex) {
             ex.printStackTrace();
         }
-
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -79,7 +81,6 @@ public class home extends JFrame {
 			//contentPane.add(panelQlySach);
 			//panelQlySach.setVisible(false);
 			//them Menu Home	
-			tt = new Thuthu();
 	}
 	//hien panel
 	public void AddPanel(JPanel pn) {

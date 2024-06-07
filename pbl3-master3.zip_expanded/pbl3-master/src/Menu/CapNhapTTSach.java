@@ -247,19 +247,12 @@ public class CapNhapTTSach extends JDialog {
 		                
 		               JOptionPane.showMessageDialog(rootPane, "sửa thành công");
 		               dispose();
-		               //QlySach ql = new QlySach(); ql.setVisible(true);
-		               //ql.setLocationRelativeTo(null);
-							 
-		               //qls.setVisible(true);
-		               //qls.setLocationRelativeTo(null);
 		               
 		               
 		            }  catch (InValidAuthorException ex) {
 		               JOptionPane.showMessageDialog(rootPane, "tên không hợp lệ");
 		            }
 		           
-		            
-
 		        }else{
 		        JOptionPane.showMessageDialog(rootPane, "thông tin không hợp lệ");
 		        }

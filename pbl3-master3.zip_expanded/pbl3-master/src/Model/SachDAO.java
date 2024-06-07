@@ -189,12 +189,9 @@ public class SachDAO implements DAOInterface<Sach> {
 	}
 
 	public boolean checkSachExist(String tenSach) {
-	    // Thực hiện truy vấn cơ sở dữ liệu để kiểm tra xem tên sách đã tồn tại hay chưa
-	    // Trả về true nếu sách tồn tại, ngược lại trả về false
-	    // Ví dụ: sử dụng PreparedStatement để thực hiện truy vấn SQL
-	    // (Đây chỉ là một mô hình đơn giản, bạn cần thay đổi phù hợp với cấu trúc cơ sở dữ liệu của bạn)
+		DataSource data = ketNoiSQL();
 	    boolean result = false;
-	    try {Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/pbl3", "root", "");
+	    try {Connection conn = data.getConnection();
 	        String query = "SELECT * FROM book WHERE Name_sach = ?";
 	        PreparedStatement preparedStatement = conn.prepareStatement(query);
 	        preparedStatement.setString(1, tenSach);
@@ -266,13 +263,47 @@ public class SachDAO implements DAOInterface<Sach> {
 		            int soluong = resultSet.getInt("Soluong_sach");
 		            result = new Sach(id_sach, id_tacgia, tacgia, tensach, theloai, nhaxb, namxb, soluong);
 		        }	
-
 		    } catch (SQLException ex) {
 		        ex.printStackTrace();
 		    }catch (InValidAuthorException ex) {
 	            ex.printStackTrace();
 	         }
 		    return result;
+		}
+	  public int getTotalBooks() {
+		    int t = 0;
+		    DataSource data = ketNoiSQL();
+		    String query = "SELECT SUM(Soluong_sach) FROM book";
+
+		    try (Connection conn = data.getConnection();
+		         PreparedStatement ps = conn.prepareStatement(query);
+		         ResultSet resultSet = ps.executeQuery()) {
+		         
+		        if (resultSet.next()) {
+		            t = resultSet.getInt(1);
+		        }
+		    } catch (SQLException ex) {
+		        ex.printStackTrace();
+		    }
+
+		    return t;
+		}
+	  public int getTotalUnique() {
+		    int t = 0;
+		    DataSource data = ketNoiSQL();
+		    String query = "SELECT COUNT(DISTINCT Id_sach) FROM book";
+
+		    try (Connection conn = data.getConnection();
+		         PreparedStatement ps = conn.prepareStatement(query);
+		         ResultSet resultSet = ps.executeQuery()) {
+		         
+		        if (resultSet.next()) {
+		            t = resultSet.getInt(1);
+		        }
+		    } catch (SQLException ex) {
+		        ex.printStackTrace();
+		    }
+		    return t;
 		}
 
 }

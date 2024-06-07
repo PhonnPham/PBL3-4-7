@@ -36,28 +36,21 @@ public class ThemSach extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private jT txtTieude,txtTacgia,txtNamXB;
+	private jT txtTieude,txtNamXB;
+	private ThemSach tSach = this;
 	private ArrayList<Sach> listSach;
 	private SachDAO SachDao;
+	private TacgiaDAO tgDao;
+	private ArrayList<Tacgia> listTG;
+	private Tacgia tg;
 	private int ids;
 	private JComboBox comboBoxNhaXB,comboBoxTheLoai;
 	private JSpinner spinnerCount;
+	private JComboBox comboBoxTG;
 
 	/**
 	 * Launch the application.
 	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					ThemSach frame = new ThemSach();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
 	
 	public   ThemSach(home parent, boolean modal) {
@@ -68,6 +61,10 @@ public class ThemSach extends JDialog {
 		listSach = new ArrayList<>();
 		SachDao.getInstance().selectAll(listSach);
 		ids = setBookID(listSach);
+		listTG = new ArrayList<>();
+	    tgDao = new TacgiaDAO();
+	    tgDao.selectAll(listTG);
+	    setCBBTG();
 	}
 	private int setBookID(ArrayList<Sach> listSach)
 	{
@@ -85,6 +82,13 @@ public class ThemSach extends JDialog {
 			}
 		}
 		return max;
+	}
+	public void setCBBTG() {
+		comboBoxTG.removeAllItems(); 
+	    for (Tacgia tg : listTG) {
+	        comboBoxTG.addItem(tg.get_hoten());
+	    }
+		
 	}
 	private void initComponents() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -107,7 +111,7 @@ public class ThemSach extends JDialog {
 	contentPane.add(panel);
 	panel.setLayout(null);
 	
-	JLabel lblNewLabel_1 = new JLabel("Thông tinh sách");
+	JLabel lblNewLabel_1 = new JLabel("Thông tin sách");
 	lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
 	lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
 	lblNewLabel_1.setBounds(184, 10, 249, 42);
@@ -151,15 +155,8 @@ public class ThemSach extends JDialog {
 	panel.add(txtTieude);
 	txtTieude.setColumns(10);
 	
-	txtTacgia = new jT();
-	txtTacgia.setFont(new Font("Tahoma", Font.PLAIN, 16));
-	txtTacgia.setBackground(new Color(250, 250, 250));
-	txtTacgia.setBorder(new EmptyBorder(20, 3, 5, 30));
-	txtTacgia.setBounds(120, 155, 208, 45);
-	panel.add(txtTacgia);
-	txtTacgia.setColumns(10);
-	
 	 comboBoxTheLoai = new JComboBox();
+	 comboBoxTheLoai.setEditable(true);
 	comboBoxTheLoai.setFont(new Font("Tahoma", Font.PLAIN, 16));
 	comboBoxTheLoai.setModel(new DefaultComboBoxModel(new String[] {"Tiểu thuyết", "Truyện đồng thoại", "Truyện thơ", "Kịch", "Nghiên cứu", "Khoa học", "Tâm lý, tình cảm", "Văn hóa xã hội", "Nấu ăn", "Khoa học công nghệ"}));
 	comboBoxTheLoai.setBackground(new Color(250, 250, 250));
@@ -175,6 +172,7 @@ public class ThemSach extends JDialog {
 	txtNamXB.setColumns(10);
 	
 	comboBoxNhaXB = new JComboBox();
+	comboBoxNhaXB.setEditable(true);
 	comboBoxNhaXB.setFont(new Font("Tahoma", Font.PLAIN, 15));
 	comboBoxNhaXB.setModel(new DefaultComboBoxModel(new String[] {"Nhà xuất bản Trẻ", "Nhà xuất bản Kim Đồng.", "Nhà xuất bản Tổng hợp thành phố Hồ Chí Minh.", "Nhà xuất bản Hội Nhà văn Việt Nam.", "Nhà xuất bản chính trị quốc gia sự thật.", "Nhà xuất bản Phụ nữ", "Nhà xuất bản Lao Động.", "Nhà xuất bản tư nhân Nhã Nam.", "Nhà xuất bản Văn Học"}));
 	comboBoxNhaXB.setBackground(new Color(250, 250, 250));
@@ -187,16 +185,25 @@ public class ThemSach extends JDialog {
 	spinnerCount.setBounds(480, 99, 75, 28);
 	panel.add(spinnerCount);
 	
+	comboBoxTG = new JComboBox();
+	comboBoxTG.setEditable(true);
+	comboBoxTG.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			tg = TacgiaDAO.getInstance().selectByName((String) comboBoxTG.getSelectedItem());
+		}
+	});
+	comboBoxTG.setBounds(120, 173, 208, 27);
+	panel.add(comboBoxTG);
+	
 	JButton btnThem = new JButton("Thêm");
 	btnThem.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			String tenSach = txtTieude.getText();
-			String tacGia = txtTacgia.getText();
 			String theLoai = comboBoxTheLoai.getSelectedItem().toString();
 			String nhaXB = comboBoxNhaXB.getSelectedItem().toString();
 			String namXb = txtNamXB.getText();
 			int soLuong = (int) spinnerCount.getValue();
-			if(!tenSach.isEmpty() && !tacGia.isEmpty() && !theLoai.isEmpty() && !nhaXB.isEmpty()
+			if(!tenSach.isEmpty() && !theLoai.isEmpty() && !nhaXB.isEmpty()
 					&& !namXb.isEmpty() && soLuong > 0)
 			{
 				if(SachDAO.getInstance().checkSachExist(tenSach))
@@ -204,16 +211,11 @@ public class ThemSach extends JDialog {
 				else
 				{
 					try {
-					Sach sach = new Sach(++ids,10,tacGia,tenSach,theLoai,nhaXB,namXb,soLuong);
+					Sach sach = new Sach(++ids,tg.get_id(),tg.get_hoten(),tenSach,theLoai,nhaXB,namXb,soLuong);
 					//SachDao.getInstance().Insert(sach);
 					SachDao.getInstance().Insert(sach);
 					JOptionPane.showMessageDialog(rootPane, "thêm sách thành công");
-					txtTieude.setText("");
-					txtTacgia.setText("");
-					txtNamXB.setText("");
-					comboBoxNhaXB.setSelectedIndex(0);
-					comboBoxTheLoai.setSelectedIndex(0);
-					spinnerCount.setValue(1);
+					dispose();
 					} 
 					catch (InValidAuthorException ex) 
 					{
@@ -243,6 +245,19 @@ public class ThemSach extends JDialog {
 	btnNewButton_1.setBackground(new Color(250, 250, 250));
 	btnNewButton_1.setBounds(677, 499, 105, 39);
 	contentPane.add(btnNewButton_1);
+	
+	JButton btnThemTG = new JButton("Thêm Tác giả");
+	btnThemTG.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			ThemTacgia them = new ThemTacgia(tSach);
+			them.setVisible(true);
+			dispose();
+		}
+	});
+	btnThemTG.setFont(new Font("Tahoma", Font.PLAIN, 18));
+	btnThemTG.setBackground(new Color(250, 250, 250));
+	btnThemTG.setBounds(107, 493, 152, 39);
+	contentPane.add(btnThemTG);
 
 	}
 }

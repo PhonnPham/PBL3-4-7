@@ -39,6 +39,7 @@ public class panelQlySach extends JPanel {
 	private int edit = -1;
 	private ArrayList<Sach> listSach;
 	private SachDAO SachDao;
+	private PhieuDAO PhieuDao;
 	private DefaultTableModel tableModel;
 	private TableActionEvent event;
 	private home parentFrame;
@@ -61,14 +62,14 @@ public class panelQlySach extends JPanel {
 		populateComboBoxes();
 		
 	}
-	void tableevent() {
+	void tableevent(ArrayList<Sach> list) {
 		event = new TableActionEvent() {
 			
 			@Override
 			public void onView(int row) {
-				if(row >= 0 && row < listSach.size())
+				if(row >= 0 && row < list.size())
 				{
-					Sach selectedBook =  listSach.get(row);
+					Sach selectedBook =  list.get(row);
 					XemTTSach xem =  new XemTTSach(parentFrame,true,selectedBook,pn);
 					xem.setVisible(true);
 				}
@@ -76,54 +77,41 @@ public class panelQlySach extends JPanel {
 			@Override
 			public void onEdit(int row) {
 				edit = row;
-				if(row >= 0 && row < listSach.size())
+				if(row >= 0 && row < list.size())
 				{
-					Sach selectedBook =  listSach.get(row);
+					Sach selectedBook =  list.get(row);
 					CapNhapTTSach up =  new CapNhapTTSach(parentFrame,true,selectedBook, pn);
 					up.setVisible(true);
 				}
 			}
-			
 			@Override
 			public void onDelete(int row) {
-				Sach selectedBook =  listSach.get(row);
+				Sach selectedBook =  list.get(row);
 				 int result = JOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa không?", "Thông Báo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		            if (result == JOptionPane.YES_OPTION) {
+		            	ArrayList<phieumuon> listphieu = new ArrayList<phieumuon>();
+		            	PhieuDAO.getInstance().selectAll(listphieu);
+		            	boolean check = false;
+		            	for (phieumuon p:listphieu ) {
+		            		if(p.get_id_sach()== selectedBook.get_id_sach()) 
+		            		{
+		            			check = true;
+		            			break;
+		            		}
+		            	}
+		            	if(check) {
 		                SachDao.getInstance().Delete(selectedBook);
 		                listSach.remove(selectedBook);
+		                tableModel.removeRow(row);
 		                tableModel.setRowCount(0); // Xóa dữ liệu từ mô hình hiện tại
-
-		                
-
 		                tableModel.fireTableDataChanged(); // Cập nhật hiển thị của bảng
 		                JOptionPane.showMessageDialog(contentPane, "Xóa thành công");
 		                showListBook(listSach);
 		            }
+		            }
 			}
 		};
 	}
-//	private void showListBook() {
-//		tableevent();
-//        tableModel.setRowCount(0);
-//        //int stt = 1;
-//        for (Sach e : listSach) {
-//            Object[] row = new Object[]{ e.get_id_sach(),
-//                e.get_tensach(),e.get_id_tacgia(),e.get_theloai(),e.get_soluong(), e.get_namxb()
-//                };
-//            tableModel.addRow(row);
-//            tableModel.fireTableDataChanged();
-//            table.setRowHeight(45);
-//	        table.setModel(tableModel);
-//	        table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellRenderer(new TableActionCellRender());
-//	        table.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellEditor(new TableActionCellEditor(event));
-//            
-//	        table.getColumnModel().getColumn(0).setPreferredWidth(15);
-//	        table.getColumnModel().getColumn(1).setPreferredWidth(80);
-//	        table.getColumnModel().getColumn(0).setPreferredWidth(15);
-//	        table.getColumnModel().getColumn(0).setPreferredWidth(15);
-//        }
-//
-//    }
 	
 	 public void editBook(Sach b) {
 	        listSach.set(edit, b);
@@ -136,7 +124,7 @@ public class panelQlySach extends JPanel {
 	        tableModel.fireTableDataChanged();
 	    }
 	 private void showSeachBook(Sach e) {
-		    tableevent();
+		    tableevent(listSach);
 
 		    tableModel.setRowCount(0);
 		    Object[] row = new Object[]{ e.get_id_sach(),
@@ -153,7 +141,7 @@ public class panelQlySach extends JPanel {
 		}
 
 	 private void showListBook(ArrayList<Sach> listSach) {
-			tableevent();
+			tableevent(listSach);
 			tableModel.setRowCount(0);
 			for (Sach e : listSach) {
 				Object[] row = new Object[]{ e.get_id_sach(),
@@ -197,6 +185,17 @@ public class panelQlySach extends JPanel {
 
 			showListBook(filteredList);
 		}
+	 
+
+	 public void reloadDataAndRefreshPanel() {
+		    // Cập nhật dữ liệu
+		  	listSach.clear();
+		    SachDao.getInstance().selectAll(listSach);
+		    
+		    showListBook(listSach);
+		}
+	 
+	 
 	public void initComponents(){
 		 new JPanel();
 		this.setBackground(new Color(129, 203, 196));
@@ -254,7 +253,7 @@ public class panelQlySach extends JPanel {
 		table.setFont(new java.awt.Font("Times New Roman", 0, 14));
 		table.setModel(new DefaultTableModel(
 	            new Object [][] {},
-	            new String [] {"ID Sách","Tên Sách","Tác giả","Thể loại","Nhà xuất bản", "Năm xuất bản","Hành động"}
+	            new String [] {"ID Sách","Tên Sách","Tác giả","Thể loại","Số lượng", "Năm xuất bản","Hành động"}
 	        ) 	{
 	            boolean[] canEdit = new boolean [] {
 	                false, false, false,false,false,false,true
@@ -325,7 +324,7 @@ public class panelQlySach extends JPanel {
 				cBnxb.setSelectedIndex(0);
 				cBTacgia.setSelectedIndex(0);
 				cBTheloai.setSelectedIndex(0);
-				showListBook(listSach);
+				reloadDataAndRefreshPanel();
 			}
 		});
 		btnNewButton_1.setBackground(new Color(69, 167, 157));

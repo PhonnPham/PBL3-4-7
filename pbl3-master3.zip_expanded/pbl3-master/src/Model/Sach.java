@@ -5,6 +5,7 @@ import DAO.DataInValidImplement;
 public class Sach {
 	private int _id_sach;
 	private int _id_tacgia;
+	private Tacgia tg;
 	private String _tacgia;
 	private String _tensach;
 	private String _nhaxb;

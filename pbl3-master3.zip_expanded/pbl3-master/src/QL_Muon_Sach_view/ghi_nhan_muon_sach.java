@@ -404,6 +404,7 @@ public class ghi_nhan_muon_sach extends JDialog {
 										cbbIdDG.setSelectedIndex(0);
 										setcbbIDDG();
 										setcbbIDSach();
+										dispose();
 									}else
 									{
 										JOptionPane.showMessageDialog(contentPanel, "mã độc giả: "+ iddg + " đã mượn sách với "+ "mã sách:" + idsach);
