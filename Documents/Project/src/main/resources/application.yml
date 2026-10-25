@@ -1,0 +1,20 @@
+spring:
+  application.name: ecommerce-restful-api
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/ecommerce}
+    username: ${DB_USERNAME:ecommerce}
+    password: ${DB_PASSWORD:ecommerce}
+  jpa:
+    hibernate.ddl-auto: update
+    open-in-view: false
+    properties.hibernate.jdbc.time_zone: UTC
+  data.redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+  cache.type: redis
+  jackson.serialization.write-dates-as-timestamps: false
+server.port: ${PORT:8080}
+security.jwt.secret: ${JWT_SECRET:change-this-development-secret-to-a-long-random-value}
+security.jwt.expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+springdoc:
+  swagger-ui.path: /swagger-ui.html
